@@ -1,44 +1,331 @@
-<!-- index.html - Save this, host on GitHub Pages -->
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Class Attendance</title>
+    <title>自我認識與全人發展 - 出席記錄</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        .student { padding: 10px; margin: 5px; border: 1px solid #ccc; }
-        .present { background-color: #c8e6c9; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .date-header {
+            text-align: center;
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .student-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .student-item {
+            background-color: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        
+        .student-item.present {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4caf50;
+        }
+        
+        .student-info {
+            flex: 1;
+        }
+        
+        .student-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+        
+        .student-email {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            font-family: monospace;
+        }
+        
+        .attendance-checkbox {
+            margin-right: 20px;
+            transform: scale(1.5);
+            cursor: pointer;
+        }
+        
+        .attendance-checkbox input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .summary {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .summary-stats {
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+        
+        .summary-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s;
+        }
+        
+        .save-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .save-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .mark-all-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .mark-all-btn:hover {
+            background-color: #d35400;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #95a5a6;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
-    <h1>Math 101 - Attendance</h1>
-    <div id="date">Today's Date</div>
-    <div id="roster"></div>
+    <h1>自我認識與全人發展</h1>
     
+    <div class="date-header">
+        📅 出席記錄 - <span id="currentDate"></span>
+    </div>
+    
+    <ul class="student-list" id="studentList">
+        <!-- Students will be inserted here by JavaScript -->
+    </ul>
+    
+    <div class="summary">
+        <div class="summary-stats">
+            <span id="presentCount">0</span>/10 出席
+        </div>
+        <div class="summary-buttons">
+            <button class="mark-all-btn" onclick="markAllPresent()">全體出席</button>
+            <button class="reset-btn" onclick="resetAttendance()">重設</button>
+            <button class="save-btn" onclick="saveAttendance()">儲存記錄</button>
+        </div>
+    </div>
+    
+    <div class="footer">
+        ⚡ 點擊核取方塊記錄出席情況 • 資料自動儲存在瀏覽器中
+    </div>
+
     <script>
-        const students = ["Alice", "Bob", "Charlie"];
-        const attendance = {};
+        // Student data
+        const students = [
+            { name: "張家豪", email: "cheung.kaho@student.edu" },
+            { name: "李小敏", email: "li.siuman@student.edu" },
+            { name: "王偉明", email: "wang.waiming@student.edu" },
+            { name: "陳雅雯", email: "chan.ngaman@student.edu" },
+            { name: "黃子軒", email: "wong.tshin@student.edu" },
+            { name: "林靜怡", email: "lam.chingyi@student.edu" },
+            { name: "鄭俊傑", email: "cheng.chunkit@student.edu" },
+            { name: "吳佩珊", email: "ng.puishan@student.edu" },
+            { name: "劉志強", email: "lau.chikeung@student.edu" },
+            { name: "何美琪", email: "ho.meiki@student.edu" }
+        ];
         
+        // Initialize attendance object
+        let attendance = {};
+        
+        // Format today's date
+        function formatDate() {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            return new Date().toLocaleDateString('zh-HK', options);
+        }
+        
+        // Load saved attendance for today
+        function loadAttendance() {
+            const today = new Date().toDateString();
+            const saved = localStorage.getItem('attendance_' + today);
+            
+            if (saved) {
+                attendance = JSON.parse(saved);
+            } else {
+                // Initialize all as absent
+                students.forEach((student, index) => {
+                    attendance[index] = false;
+                });
+            }
+            
+            renderRoster();
+            updateSummary();
+        }
+        
+        // Render the student roster
         function renderRoster() {
-            const rosterDiv = document.getElementById('roster');
+            const rosterDiv = document.getElementById('studentList');
             rosterDiv.innerHTML = '';
-            students.forEach(student => {
-                const div = document.createElement('div');
-                div.className = 'student' + (attendance[student] ? ' present' : '');
-                div.textContent = student;
-                div.onclick = () => toggleAttendance(student);
-                rosterDiv.appendChild(div);
+            
+            students.forEach((student, index) => {
+                const li = document.createElement('li');
+                li.className = 'student-item' + (attendance[index] ? ' present' : '');
+                
+                li.innerHTML = `
+                    <div class="student-info">
+                        <div class="student-name">${student.name}</div>
+                        <div class="student-email">${student.email}</div>
+                    </div>
+                    <div class="attendance-checkbox">
+                        <input type="checkbox" 
+                               ${attendance[index] ? 'checked' : ''} 
+                               onchange="toggleAttendance(${index})"
+                               aria-label="出席記錄 for ${student.name}">
+                    </div>
+                `;
+                
+                rosterDiv.appendChild(li);
             });
         }
         
-        function toggleAttendance(student) {
-            attendance[student] = !attendance[student];
-            renderRoster();
-            // Save to localStorage
-            localStorage.setItem('attendance_' + new Date().toDateString(), 
-                               JSON.stringify(attendance));
+        // Toggle attendance for a student
+        function toggleAttendance(index) {
+            attendance[index] = !attendance[index];
+            
+            // Update the visual style
+            const items = document.querySelectorAll('.student-item');
+            if (items[index]) {
+                if (attendance[index]) {
+                    items[index].classList.add('present');
+                } else {
+                    items[index].classList.remove('present');
+                }
+            }
+            
+            updateSummary();
+            autoSave();
         }
         
-        document.getElementById('date').textContent = new Date().toDateString();
-        renderRoster();
+        // Mark all students as present
+        function markAllPresent() {
+            students.forEach((_, index) => {
+                attendance[index] = true;
+            });
+            renderRoster();
+            updateSummary();
+            autoSave();
+        }
+        
+        // Reset all attendance to unchecked
+        function resetAttendance() {
+            if (confirm('確定要重設所有出席記錄嗎？')) {
+                students.forEach((_, index) => {
+                    attendance[index] = false;
+                });
+                renderRoster();
+                updateSummary();
+                autoSave();
+            }
+        }
+        
+        // Save attendance to localStorage
+        function saveAttendance() {
+            const today = new Date().toDateString();
+            localStorage.setItem('attendance_' + today, JSON.stringify(attendance));
+            
+            // Show save confirmation
+            const saveBtn = document.querySelector('.save-btn');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = '✓ 已儲存';
+            saveBtn.style.backgroundColor = '#27ae60';
+            
+            setTimeout(() => {
+                saveBtn.textContent = originalText;
+                saveBtn.style.backgroundColor = '#3498db';
+            }, 2000);
+        }
+        
+        // Auto-save (silent)
+        function autoSave() {
+            const today = new Date().toDateString();
+            localStorage.setItem('attendance_' + today, JSON.stringify(attendance));
+        }
+        
+        // Update summary statistics
+        function updateSummary() {
+            const presentCount = Object.values(attendance).filter(value => value).length;
+            document.getElementById('presentCount').textContent = presentCount;
+        }
+        
+        // Load previous days (optional feature)
+        function loadPreviousDay(dateString) {
+            const saved = localStorage.getItem('attendance_' + dateString);
+            if (saved) {
+                attendance = JSON.parse(saved);
+                renderRoster();
+                updateSummary();
+                document.getElementById('currentDate').textContent = dateString;
+            } else {
+                alert('沒有找到該日期的記錄');
+            }
+        }
+        
+        // Initialize the page
+        document.getElementById('currentDate').textContent = formatDate();
+        loadAttendance();
     </script>
 </body>
 </html>
