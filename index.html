@@ -147,19 +147,21 @@
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         
         .summary-stats {
             font-size: 1.1em;
             color: #2c3e50;
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ecf0f1;
         }
         
         .summary-buttons {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
         
         button {
@@ -174,6 +176,7 @@
         .save-btn {
             background-color: #3498db;
             color: white;
+            flex: 1;
         }
         
         .save-btn:hover {
@@ -183,6 +186,7 @@
         .reset-btn {
             background-color: #e74c3c;
             color: white;
+            flex: 1;
         }
         
         .reset-btn:hover {
@@ -192,10 +196,39 @@
         .mark-all-btn {
             background-color: #f39c12;
             color: white;
+            flex: 1;
         }
         
         .mark-all-btn:hover {
             background-color: #d35400;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed #ecf0f1;
+        }
+        
+        .email-btn {
+            background-color: #007aff;
+            color: white;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .copy-btn {
+            background-color: #5856d6;
+            color: white;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
         
         .add-student-btn {
@@ -329,25 +362,6 @@
             font-size: 0.9em;
         }
         
-        .history-preview {
-            margin-top: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-        
-        .student-badge {
-            background-color: #ecf0f1;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
-        }
-        
-        .student-badge.present {
-            background-color: #4caf50;
-            color: white;
-        }
-        
         .detail-view {
             background-color: white;
             border-radius: 10px;
@@ -405,7 +419,7 @@
     <!-- Attendance Tab -->
     <div id="attendanceTab" class="tab-content active">
         <div class="date-header">
-            📅 今日出席 - <span id="currentDate"></span>
+            📅 <span id="currentDate"></span>
         </div>
         
         <ul class="student-list" id="studentList">
@@ -420,10 +434,20 @@
             <div class="summary-stats">
                 <span id="presentCount">0</span>/<span id="totalStudents">10</span> 出席
             </div>
+            
             <div class="summary-buttons">
                 <button class="mark-all-btn" onclick="markAllPresent()">全體出席</button>
                 <button class="reset-btn" onclick="resetAttendance()">重設</button>
                 <button class="save-btn" onclick="saveAttendance()">儲存記錄</button>
+            </div>
+            
+            <div class="share-buttons">
+                <button class="email-btn" onclick="emailAttendance()">
+                    📧 電郵記錄
+                </button>
+                <button class="copy-btn" onclick="copyAttendance()">
+                    📋 複製記錄
+                </button>
             </div>
         </div>
     </div>
@@ -486,6 +510,17 @@
         // Initialize attendance object
         let attendance = {};
         
+        // Current date string for storage key
+        function getTodayKey() {
+            return new Date().toDateString();
+        }
+        
+        // Format date for display
+        function formatDate() {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            return new Date().toLocaleDateString('zh-HK', options);
+        }
+        
         // Tab switching
         function switchTab(tab) {
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
@@ -494,6 +529,7 @@
             if (tab === 'attendance') {
                 document.querySelectorAll('.tab-button')[0].classList.add('active');
                 document.getElementById('attendanceTab').classList.add('active');
+                loadAttendance(); // Reload today's attendance when switching back
             } else {
                 document.querySelectorAll('.tab-button')[1].classList.add('active');
                 document.getElementById('historyTab').classList.add('active');
@@ -501,23 +537,9 @@
             }
         }
         
-        // Format date
-        function formatDate(dateString) {
-            if (!dateString) {
-                const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-                return new Date().toLocaleDateString('zh-HK', options);
-            }
-            return new Date(dateString).toLocaleDateString('zh-HK', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                weekday: 'long'
-            });
-        }
-        
         // Load saved attendance for today
         function loadAttendance() {
-            const today = new Date().toDateString();
+            const today = getTodayKey();
             const saved = localStorage.getItem('attendance_' + today);
             
             // Load temporary students if any
@@ -531,9 +553,16 @@
             
             if (saved) {
                 attendance = JSON.parse(saved);
+                // Ensure attendance array length matches students length
+                const newAttendance = {};
+                students.forEach((_, index) => {
+                    newAttendance[index] = saved[index] || false;
+                });
+                attendance = newAttendance;
             } else {
-                // Initialize all as absent
-                students.forEach((student, index) => {
+                // Initialize all as absent for today
+                attendance = {};
+                students.forEach((_, index) => {
                     attendance[index] = false;
                 });
             }
@@ -704,7 +733,7 @@
         
         // Save attendance to localStorage
         function saveAttendance() {
-            const today = new Date().toDateString();
+            const today = getTodayKey();
             localStorage.setItem('attendance_' + today, JSON.stringify(attendance));
             
             // Show save confirmation
@@ -721,7 +750,7 @@
         
         // Auto-save (silent)
         function autoSave() {
-            const today = new Date().toDateString();
+            const today = getTodayKey();
             localStorage.setItem('attendance_' + today, JSON.stringify(attendance));
         }
         
@@ -730,6 +759,64 @@
             const presentCount = Object.values(attendance).filter(value => value).length;
             document.getElementById('presentCount').textContent = presentCount;
             document.getElementById('totalStudents').textContent = students.length;
+            document.getElementById('currentDate').textContent = formatDate();
+        }
+        
+        // Generate attendance text for sharing
+        function generateAttendanceText() {
+            const presentList = [];
+            const absentList = [];
+            
+            students.forEach((student, index) => {
+                if (attendance[index]) {
+                    presentList.push(`${student.name} (${student.email})`);
+                } else {
+                    absentList.push(student.name);
+                }
+            });
+            
+            let text = `📋 自我認識與全人發展\n`;
+            text += `📅 ${formatDate()}\n`;
+            text += `━━━━━━━━━━━━━━━━━━\n\n`;
+            text += `✅ 出席 (${presentList.length}人):\n`;
+            presentList.forEach(name => text += `   • ${name}\n`);
+            
+            text += `\n❌ 缺席 (${absentList.length}人):\n`;
+            absentList.forEach(name => text += `   • ${name}\n`);
+            
+            text += `\n━━━━━━━━━━━━━━━━━━\n`;
+            text += `總出席率: ${Math.round(presentList.length/students.length*100)}% (${presentList.length}/${students.length})`;
+            
+            return text;
+        }
+        
+        // Email attendance
+        function emailAttendance() {
+            const subject = `出席記錄 - ${formatDate()}`;
+            const body = generateAttendanceText();
+            
+            // Create mailto link
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+        
+        // Copy attendance to clipboard
+        function copyAttendance() {
+            const text = generateAttendanceText();
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Show success message
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✓ 已複製';
+                copyBtn.style.backgroundColor = '#27ae60';
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.backgroundColor = '#5856d6';
+                }, 2000);
+            }).catch(() => {
+                alert('複製失敗，請手動選擇複製');
+            });
         }
         
         // Load history
@@ -754,7 +841,7 @@
                 
                 html += `
                     <div class="history-item" onclick="viewHistoryDetail('${dateStr}')">
-                        <div class="history-date">📅 ${formatDate(dateStr)}</div>
+                        <div class="history-date">📅 ${new Date(dateStr).toLocaleDateString('zh-HK', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                         <div class="history-stats">
                             <span>✅ 出席: ${presentCount}/${totalCount}</span>
                             <span>❌ 缺席: ${totalCount - presentCount}/${totalCount}</span>
@@ -772,11 +859,9 @@
             const data = JSON.parse(localStorage.getItem('attendance_' + dateStr));
             const detailDiv = document.getElementById('historyDetail');
             
-            // For history view, we need to know which students existed that day
-            // This is a simplified version using current students
             let html = `
                 <button class="back-button" onclick="loadHistory()">← 返回列表</button>
-                <h3>📅 ${formatDate(dateStr)}</h3>
+                <h3>📅 ${new Date(dateStr).toLocaleDateString('zh-HK', { year: 'numeric', month: 'long', day: 'numeric' })}</h3>
                 <button class="delete-btn" onclick="deleteHistory('${dateStr}')">🗑️ 刪除記錄</button>
                 <ul class="student-list" style="margin-top: 20px;">
             `;
@@ -823,13 +908,13 @@
                 
                 students.forEach((student, index) => {
                     if (data[index] !== undefined) {
-                        csv += `"${formatDate(dateStr)}","${student.name}","${student.email}","${data[index] ? '出席' : '缺席'}"\n`;
+                        csv += `"${new Date(dateStr).toLocaleDateString('zh-HK')}","${student.name}","${student.email}","${data[index] ? '出席' : '缺席'}"\n`;
                     }
                 });
             });
             
             // Download CSV file
-            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }); // Add BOM for Chinese
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = '出席記錄_' + new Date().toISOString().slice(0,10) + '.csv';
