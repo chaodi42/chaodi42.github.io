@@ -1,1 +1,44 @@
-<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Personal Webpage</title>\n    <style>\n        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }\n        header { background-color: #4CAF50; color: white; padding: 10px 0; text-align: center; }\n        section { padding: 20px; }\n        footer { text-align: center; padding: 10px 0; background-color: #f1f1f1; }\n    </style>\n</head>\n<body>\n    <header>\n        <h1>Welcome to My Personal Webpage</h1>\n    </header>\n    <section>\n        <h2>About Me</h2>\n        <p>Hello! I am a web enthusiast looking to share my journey and projects with the world.</p>\n    </section>\n    <footer>\n        <p>Contact me at: <a href="mailto:example@example.com">example@example.com</a></p>\n    </footer>\n</body>\n</html>
+<!-- index.html - Save this, host on GitHub Pages -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Class Attendance</title>
+    <style>
+        .student { padding: 10px; margin: 5px; border: 1px solid #ccc; }
+        .present { background-color: #c8e6c9; }
+    </style>
+</head>
+<body>
+    <h1>Math 101 - Attendance</h1>
+    <div id="date">Today's Date</div>
+    <div id="roster"></div>
+    
+    <script>
+        const students = ["Alice", "Bob", "Charlie"];
+        const attendance = {};
+        
+        function renderRoster() {
+            const rosterDiv = document.getElementById('roster');
+            rosterDiv.innerHTML = '';
+            students.forEach(student => {
+                const div = document.createElement('div');
+                div.className = 'student' + (attendance[student] ? ' present' : '');
+                div.textContent = student;
+                div.onclick = () => toggleAttendance(student);
+                rosterDiv.appendChild(div);
+            });
+        }
+        
+        function toggleAttendance(student) {
+            attendance[student] = !attendance[student];
+            renderRoster();
+            // Save to localStorage
+            localStorage.setItem('attendance_' + new Date().toDateString(), 
+                               JSON.stringify(attendance));
+        }
+        
+        document.getElementById('date').textContent = new Date().toDateString();
+        renderRoster();
+    </script>
+</body>
+</html>
