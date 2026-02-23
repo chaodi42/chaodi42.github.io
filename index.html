@@ -552,13 +552,12 @@
             }
             
             if (saved) {
-                attendance = JSON.parse(saved);
-                // Ensure attendance array length matches students length
-                const newAttendance = {};
+                const savedData = JSON.parse(saved);
+                attendance = {};
                 students.forEach((_, index) => {
-                    newAttendance[index] = saved[index] || false;
+                    // Use saved value if it exists, otherwise false
+                    attendance[index] = savedData[index] || false;
                 });
-                attendance = newAttendance;
             } else {
                 // Initialize all as absent for today
                 attendance = {};
