@@ -20,6 +20,36 @@
             border-bottom: 3px solid #3498db;
         }
         
+        .tab-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .tab-button {
+            padding: 10px 20px;
+            background-color: #ecf0f1;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+        }
+        
+        .tab-button.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
         .date-header {
             text-align: center;
             font-size: 1.2em;
@@ -46,11 +76,17 @@
             display: flex;
             align-items: center;
             transition: background-color 0.2s;
+            position: relative;
         }
         
         .student-item.present {
             background-color: #e8f5e9;
             border-left: 5px solid #4caf50;
+        }
+        
+        .student-item.temporary {
+            border: 2px dashed #f39c12;
+            background-color: #fff3e0;
         }
         
         .student-info {
@@ -70,6 +106,16 @@
             font-family: monospace;
         }
         
+        .student-badge {
+            font-size: 0.7em;
+            background-color: #f39c12;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 10px;
+            display: inline-block;
+        }
+        
         .attendance-checkbox {
             margin-right: 20px;
             transform: scale(1.5);
@@ -80,6 +126,19 @@
             width: 20px;
             height: 20px;
             cursor: pointer;
+        }
+        
+        .delete-student {
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1.2em;
+            margin-left: 10px;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        
+        .delete-student:hover {
+            opacity: 1;
         }
         
         .summary {
@@ -139,6 +198,194 @@
             background-color: #d35400;
         }
         
+        .add-student-btn {
+            background-color: #27ae60;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            margin-top: 20px;
+            border: 2px dashed #27ae60;
+            background-color: white;
+            color: #27ae60;
+        }
+        
+        .add-student-btn:hover {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .modal-content h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ecf0f1;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .modal-buttons button {
+            padding: 10px 20px;
+        }
+        
+        .cancel-btn {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .add-confirm-btn {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        /* History Page Styles */
+        .history-list {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .history-item {
+            border-bottom: 1px solid #ecf0f1;
+            padding: 15px 0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .history-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-date {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .history-stats {
+            display: flex;
+            gap: 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .history-preview {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .student-badge {
+            background-color: #ecf0f1;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+        
+        .student-badge.present {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .detail-view {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .back-button {
+            background-color: #95a5a6;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        .export-btn {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
         .footer {
             margin-top: 20px;
             text-align: center;
@@ -150,57 +397,137 @@
 <body>
     <h1>自我認識與全人發展</h1>
     
-    <div class="date-header">
-        📅 出席記錄 - <span id="currentDate"></span>
+    <div class="tab-bar">
+        <button class="tab-button active" onclick="switchTab('attendance')">📋 出席記錄</button>
+        <button class="tab-button" onclick="switchTab('history')">📊 歷史記錄</button>
     </div>
     
-    <ul class="student-list" id="studentList">
-        <!-- Students will be inserted here by JavaScript -->
-    </ul>
-    
-    <div class="summary">
-        <div class="summary-stats">
-            <span id="presentCount">0</span>/10 出席
+    <!-- Attendance Tab -->
+    <div id="attendanceTab" class="tab-content active">
+        <div class="date-header">
+            📅 今日出席 - <span id="currentDate"></span>
         </div>
-        <div class="summary-buttons">
-            <button class="mark-all-btn" onclick="markAllPresent()">全體出席</button>
-            <button class="reset-btn" onclick="resetAttendance()">重設</button>
-            <button class="save-btn" onclick="saveAttendance()">儲存記錄</button>
+        
+        <ul class="student-list" id="studentList">
+            <!-- Students will be inserted here by JavaScript -->
+        </ul>
+        
+        <button class="add-student-btn" onclick="showAddStudentModal()">
+            ➕ 加入新同學
+        </button>
+        
+        <div class="summary">
+            <div class="summary-stats">
+                <span id="presentCount">0</span>/<span id="totalStudents">10</span> 出席
+            </div>
+            <div class="summary-buttons">
+                <button class="mark-all-btn" onclick="markAllPresent()">全體出席</button>
+                <button class="reset-btn" onclick="resetAttendance()">重設</button>
+                <button class="save-btn" onclick="saveAttendance()">儲存記錄</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- History Tab -->
+    <div id="historyTab" class="tab-content">
+        <div class="history-list" id="historyList">
+            <!-- History items will be inserted here -->
+        </div>
+        <button class="export-btn" onclick="exportToCSV()">📥 匯出所有記錄 (CSV)</button>
+        <div id="historyDetail" class="detail-view" style="display: none;"></div>
+    </div>
+    
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <h2>加入新同學</h2>
+            <div class="form-group">
+                <label for="studentName">姓名</label>
+                <input type="text" id="studentName" placeholder="例如：陳小明">
+            </div>
+            <div class="form-group">
+                <label for="studentEmail">電郵</label>
+                <input type="email" id="studentEmail" placeholder="example@student.edu">
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="markPresent" checked> 立即標記為出席
+                </label>
+            </div>
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="hideAddStudentModal()">取消</button>
+                <button class="add-confirm-btn" onclick="addStudent()">加入</button>
+            </div>
         </div>
     </div>
     
     <div class="footer">
-        ⚡ 點擊核取方塊記錄出席情況 • 資料自動儲存在瀏覽器中
+        ⚡ 點擊核取方塊記錄出席情況 • 可隨時加入新同學
     </div>
 
     <script>
-        // Student data
-        const students = [
-            { name: "張家豪", email: "cheung.kaho@student.edu" },
-            { name: "李小敏", email: "li.siuman@student.edu" },
-            { name: "王偉明", email: "wang.waiming@student.edu" },
-            { name: "陳雅雯", email: "chan.ngaman@student.edu" },
-            { name: "黃子軒", email: "wong.tshin@student.edu" },
-            { name: "林靜怡", email: "lam.chingyi@student.edu" },
-            { name: "鄭俊傑", email: "cheng.chunkit@student.edu" },
-            { name: "吳佩珊", email: "ng.puishan@student.edu" },
-            { name: "劉志強", email: "lau.chikeung@student.edu" },
-            { name: "何美琪", email: "ho.meiki@student.edu" }
+        // Base student data
+        const baseStudents = [
+            { name: "張家豪", email: "cheung.kaho@student.edu", temporary: false },
+            { name: "李小敏", email: "li.siuman@student.edu", temporary: false },
+            { name: "王偉明", email: "wang.waiming@student.edu", temporary: false },
+            { name: "陳雅雯", email: "chan.ngaman@student.edu", temporary: false },
+            { name: "黃子軒", email: "wong.tshin@student.edu", temporary: false },
+            { name: "林靜怡", email: "lam.chingyi@student.edu", temporary: false },
+            { name: "鄭俊傑", email: "cheng.chunkit@student.edu", temporary: false },
+            { name: "吳佩珊", email: "ng.puishan@student.edu", temporary: false },
+            { name: "劉志強", email: "lau.chikeung@student.edu", temporary: false },
+            { name: "何美琪", email: "ho.meiki@student.edu", temporary: false }
         ];
+        
+        // Students array (includes temporary additions)
+        let students = [...baseStudents];
         
         // Initialize attendance object
         let attendance = {};
         
-        // Format today's date
-        function formatDate() {
-            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-            return new Date().toLocaleDateString('zh-HK', options);
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (tab === 'attendance') {
+                document.querySelectorAll('.tab-button')[0].classList.add('active');
+                document.getElementById('attendanceTab').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-button')[1].classList.add('active');
+                document.getElementById('historyTab').classList.add('active');
+                loadHistory();
+            }
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            if (!dateString) {
+                const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+                return new Date().toLocaleDateString('zh-HK', options);
+            }
+            return new Date(dateString).toLocaleDateString('zh-HK', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'long'
+            });
         }
         
         // Load saved attendance for today
         function loadAttendance() {
             const today = new Date().toDateString();
             const saved = localStorage.getItem('attendance_' + today);
+            
+            // Load temporary students if any
+            const savedTempStudents = localStorage.getItem('temporary_students');
+            if (savedTempStudents) {
+                const tempStudents = JSON.parse(savedTempStudents);
+                students = [...baseStudents, ...tempStudents];
+            } else {
+                students = [...baseStudents];
+            }
             
             if (saved) {
                 attendance = JSON.parse(saved);
@@ -222,11 +549,20 @@
             
             students.forEach((student, index) => {
                 const li = document.createElement('li');
-                li.className = 'student-item' + (attendance[index] ? ' present' : '');
+                li.className = 'student-item' + (attendance[index] ? ' present' : '') + 
+                              (student.temporary ? ' temporary' : '');
+                
+                const deleteButton = student.temporary ? 
+                    `<span class="delete-student" onclick="deleteTemporaryStudent(${index})" title="刪除此同學">✖</span>` : '';
+                
+                const tempBadge = student.temporary ? 
+                    '<span class="student-badge">臨時</span>' : '';
                 
                 li.innerHTML = `
                     <div class="student-info">
-                        <div class="student-name">${student.name}</div>
+                        <div class="student-name">
+                            ${student.name} ${tempBadge}
+                        </div>
                         <div class="student-email">${student.email}</div>
                     </div>
                     <div class="attendance-checkbox">
@@ -235,6 +571,7 @@
                                onchange="toggleAttendance(${index})"
                                aria-label="出席記錄 for ${student.name}">
                     </div>
+                    ${deleteButton}
                 `;
                 
                 rosterDiv.appendChild(li);
@@ -281,6 +618,90 @@
             }
         }
         
+        // Show add student modal
+        function showAddStudentModal() {
+            document.getElementById('addStudentModal').classList.add('active');
+            document.getElementById('studentName').focus();
+        }
+        
+        // Hide add student modal
+        function hideAddStudentModal() {
+            document.getElementById('addStudentModal').classList.remove('active');
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentEmail').value = '';
+            document.getElementById('markPresent').checked = true;
+        }
+        
+        // Add new student
+        function addStudent() {
+            const name = document.getElementById('studentName').value.trim();
+            const email = document.getElementById('studentEmail').value.trim();
+            const markPresent = document.getElementById('markPresent').checked;
+            
+            if (!name || !email) {
+                alert('請填寫姓名和電郵');
+                return;
+            }
+            
+            // Create new student
+            const newStudent = {
+                name: name,
+                email: email,
+                temporary: true
+            };
+            
+            // Add to students array
+            students.push(newStudent);
+            const newIndex = students.length - 1;
+            
+            // Set attendance
+            attendance[newIndex] = markPresent;
+            
+            // Save temporary students to localStorage
+            const tempStudents = students.filter(s => s.temporary);
+            localStorage.setItem('temporary_students', JSON.stringify(tempStudents));
+            
+            // Re-render and save
+            renderRoster();
+            updateSummary();
+            autoSave();
+            
+            // Close modal
+            hideAddStudentModal();
+            
+            // Show confirmation
+            alert(`已加入 ${name}`);
+        }
+        
+        // Delete temporary student
+        function deleteTemporaryStudent(index) {
+            if (confirm(`確定要刪除 ${students[index].name} 嗎？`)) {
+                // Remove from students array
+                students.splice(index, 1);
+                
+                // Rebuild attendance object
+                const newAttendance = {};
+                students.forEach((_, i) => {
+                    // Shift attendance for subsequent students
+                    if (i < index) {
+                        newAttendance[i] = attendance[i];
+                    } else {
+                        newAttendance[i] = attendance[i + 1] || false;
+                    }
+                });
+                attendance = newAttendance;
+                
+                // Save temporary students
+                const tempStudents = students.filter(s => s.temporary);
+                localStorage.setItem('temporary_students', JSON.stringify(tempStudents));
+                
+                // Re-render and save
+                renderRoster();
+                updateSummary();
+                autoSave();
+            }
+        }
+        
         // Save attendance to localStorage
         function saveAttendance() {
             const today = new Date().toDateString();
@@ -308,24 +729,124 @@
         function updateSummary() {
             const presentCount = Object.values(attendance).filter(value => value).length;
             document.getElementById('presentCount').textContent = presentCount;
+            document.getElementById('totalStudents').textContent = students.length;
         }
         
-        // Load previous days (optional feature)
-        function loadPreviousDay(dateString) {
-            const saved = localStorage.getItem('attendance_' + dateString);
-            if (saved) {
-                attendance = JSON.parse(saved);
-                renderRoster();
-                updateSummary();
-                document.getElementById('currentDate').textContent = dateString;
-            } else {
-                alert('沒有找到該日期的記錄');
+        // Load history
+        function loadHistory() {
+            const historyList = document.getElementById('historyList');
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('attendance_'));
+            
+            if (keys.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; color: #7f8c8d;">暫無歷史記錄</p>';
+                return;
             }
+            
+            // Sort by date (newest first)
+            keys.sort().reverse();
+            
+            let html = '<h3>📜 過往出席記錄</h3>';
+            keys.forEach(key => {
+                const dateStr = key.replace('attendance_', '');
+                const data = JSON.parse(localStorage.getItem(key));
+                const presentCount = Object.values(data).filter(v => v).length;
+                const totalCount = Object.keys(data).length;
+                
+                html += `
+                    <div class="history-item" onclick="viewHistoryDetail('${dateStr}')">
+                        <div class="history-date">📅 ${formatDate(dateStr)}</div>
+                        <div class="history-stats">
+                            <span>✅ 出席: ${presentCount}/${totalCount}</span>
+                            <span>❌ 缺席: ${totalCount - presentCount}/${totalCount}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            historyList.innerHTML = html;
+            document.getElementById('historyDetail').style.display = 'none';
+        }
+        
+        // View history detail
+        function viewHistoryDetail(dateStr) {
+            const data = JSON.parse(localStorage.getItem('attendance_' + dateStr));
+            const detailDiv = document.getElementById('historyDetail');
+            
+            // For history view, we need to know which students existed that day
+            // This is a simplified version using current students
+            let html = `
+                <button class="back-button" onclick="loadHistory()">← 返回列表</button>
+                <h3>📅 ${formatDate(dateStr)}</h3>
+                <button class="delete-btn" onclick="deleteHistory('${dateStr}')">🗑️ 刪除記錄</button>
+                <ul class="student-list" style="margin-top: 20px;">
+            `;
+            
+            students.forEach((student, index) => {
+                const isPresent = data[index] || false;
+                html += `
+                    <li class="student-item ${isPresent ? 'present' : ''}" style="opacity: ${isPresent ? 1 : 0.7}">
+                        <div class="student-info">
+                            <div class="student-name">${student.name}</div>
+                            <div class="student-email">${student.email}</div>
+                        </div>
+                        <div style="margin-right: 20px; font-weight: bold;">
+                            ${isPresent ? '✅ 出席' : '❌ 缺席'}
+                        </div>
+                    </li>
+                `;
+            });
+            
+            html += '</ul>';
+            detailDiv.innerHTML = html;
+            detailDiv.style.display = 'block';
+            document.querySelector('.history-list').style.display = 'none';
+        }
+        
+        // Delete history record
+        function deleteHistory(dateStr) {
+            if (confirm('確定要刪除這天的記錄嗎？')) {
+                localStorage.removeItem('attendance_' + dateStr);
+                loadHistory();
+            }
+        }
+        
+        // Export to CSV
+        function exportToCSV() {
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('attendance_'));
+            
+            // Create CSV header
+            let csv = '日期,學生姓名,電郵,出席狀態\n';
+            
+            keys.forEach(key => {
+                const dateStr = key.replace('attendance_', '');
+                const data = JSON.parse(localStorage.getItem(key));
+                
+                students.forEach((student, index) => {
+                    if (data[index] !== undefined) {
+                        csv += `"${formatDate(dateStr)}","${student.name}","${student.email}","${data[index] ? '出席' : '缺席'}"\n`;
+                    }
+                });
+            });
+            
+            // Download CSV file
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }); // Add BOM for Chinese
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '出席記錄_' + new Date().toISOString().slice(0,10) + '.csv';
+            link.click();
         }
         
         // Initialize the page
         document.getElementById('currentDate').textContent = formatDate();
         loadAttendance();
+        
+        // Close modal if clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('addStudentModal');
+            if (event.target === modal) {
+                hideAddStudentModal();
+            }
+        }
     </script>
 </body>
 </html>
