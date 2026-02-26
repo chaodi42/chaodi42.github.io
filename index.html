@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>自我認識與全人發展 - 出席記錄</title>
+    <title>自我認識與全人發展 - 出勤記錄</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -412,8 +412,8 @@
     <h1>自我認識與全人發展</h1>
     
     <div class="tab-bar">
-        <button class="tab-button active" onclick="switchTab('attendance')">📋 出席記錄</button>
-        <button class="tab-button" onclick="switchTab('history')">📊 歷史記錄</button>
+        <button class="tab-button active" onclick="switchTab('attendance')">📋 出勤記錄</button>
+        <button class="tab-button" onclick="switchTab('history')">📊 匯總記錄</button>
     </div>
     
     <!-- Attendance Tab -->
@@ -438,15 +438,15 @@
             <div class="summary-buttons">
                 <button class="mark-all-btn" onclick="markAllPresent()">全體出席</button>
                 <button class="reset-btn" onclick="resetAttendance()">重設</button>
-                <button class="save-btn" onclick="saveAttendance()">儲存記錄</button>
+                <button class="save-btn" onclick="saveAttendance()">保存</button>
             </div>
             
             <div class="share-buttons">
                 <button class="email-btn" onclick="emailAttendance()">
-                    📧 電郵記錄
+                    📧 Email
                 </button>
                 <button class="copy-btn" onclick="copyAttendance()">
-                    📋 複製記錄
+                    📋 Copy
                 </button>
             </div>
         </div>
@@ -457,7 +457,7 @@
         <div class="history-list" id="historyList">
             <!-- History items will be inserted here -->
         </div>
-        <button class="export-btn" onclick="exportToCSV()">📥 匯出所有記錄 (CSV)</button>
+        <button class="export-btn" onclick="exportToCSV()">📥 下載所有記錄 (CSV)</button>
         <div id="historyDetail" class="detail-view" style="display: none;"></div>
     </div>
     
@@ -472,6 +472,14 @@
             <div class="form-group">
                 <label for="studentEmail">電郵</label>
                 <input type="email" id="studentEmail" placeholder="example@student.edu">
+            </div>
+            <div class="form-group">
+                <label for="studentEmail">電話</label>
+                <input type="phone" id="studentPhone" placeholder="987-654-3210">
+            </div>
+            <div class="form-group">
+                <label for="studentEmail">團契</label>
+                <input type="group" id="studentGroup" placeholder="愛主團契">
             </div>
             <div class="form-group">
                 <label>
@@ -505,8 +513,8 @@
     { name: "11 劉珂", email: "keliu0616@gmail.com", temporary: false },
     { name: "12 郝平", email: "pinghao0103@gmail.com", temporary: false },
     { name: "13 徐洪波", email: "oliviapanxu@hotmail.com", temporary: false },
-    { name: "14 Kevin Dong", email: "kevindong@leaphomeservices.com", temporary: false },
-    { name: "15 Melody Wu", email: "lihsu.wu@gmail.com", temporary: false },
+    { name: "14 董寧", email: "kevindong@leaphomeservices.com", temporary: false },
+    { name: "15 吳歴薰", email: "lihsu.wu@gmail.com", temporary: false },
     { name: "16 張美霓", email: "vmchen99@gmail.com", temporary: false },
     { name: "17 黃文琦", email: "peggywch138@gmail.com", temporary: false },
     { name: "18 司占杰", email: "zs2155@columbia.edu", temporary: false },
@@ -517,7 +525,7 @@
     { name: "23 崔廣琦", email: "kathytree@gmail.com", temporary: false },
     { name: "24 趙蕊", email: "ruizhao45@gmail.com", temporary: false },
     { name: "25 刘晖", email: "huiweston@gmail.com", temporary: false },
-    { name: "26 Faye", email: "fayechew07@gmail.com", temporary: false },
+    { name: "26 Faye Chew", email: "fayechew07@gmail.com", temporary: false },
     { name: "27 楊婧", email: "", temporary: false }
         ];
         
