@@ -689,6 +689,8 @@
         function addStudent() {
             const name = document.getElementById('studentName').value.trim();
             const email = document.getElementById('studentEmail').value.trim();
+            const phone = document.getElementById('studentPhone').value.trim();
+            const group = document.getElementById('studentGroup').value.trim();
             const markPresent = document.getElementById('markPresent').checked;
             
             if (!name || !email) {
