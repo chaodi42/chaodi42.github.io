@@ -797,12 +797,20 @@
             
             students.forEach((student, index) => {
                 if (attendance[index]) {
-                    presentList.push(
-                        `Name: ${student.name}\n` +
-                        `Email: ${student.email}\n` +
-                        `Phone: ${student.phone}\n` +
-                        `Group: ${student.group}\n`
-                        );
+                    let presentEntry = `${student.name}`;
+                // Add email if available
+                if (student.email && student.email.trim() !== '') {
+                    presentEntry += ` (${student.email})`;
+                }
+                // Add phone if available
+                if (student.phone && student.phone.trim() !== '') {
+                    presentEntry += ` - Phone: ${student.phone}`;
+                }
+                // Add group if available
+                if (student.group && student.group.trim() !== '') {
+                    presentEntry += `, Group: ${student.group}`;
+            }
+            presentList.push(presentEntry);
                 } else {
                     absentList.push(student.name);
                 }
