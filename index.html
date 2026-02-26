@@ -797,7 +797,12 @@
             
             students.forEach((student, index) => {
                 if (attendance[index]) {
-                    presentList.push(`${student.name} (${student.email})`);
+                    presentList.push(
+                        `Name: ${student.name}\n` +
+                        `Email: ${student.email}\n` +
+                        `Phone: ${student.phone}\n` +
+                        `Group: ${student.group}\n`
+                        );
                 } else {
                     absentList.push(student.name);
                 }
