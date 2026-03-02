@@ -575,19 +575,31 @@
             // Load temporary students if any
             const savedTempStudents = localStorage.getItem('temporary_students');
             if (savedTempStudents) {
-                const tempStudents = JSON.parse(savedTempStudents);
-                students = [...baseStudents, ...tempStudents];
+                try {
+                    const tempStudents = JSON.parse(savedTempStudents);
+                    students = [...baseStudents, ...tempStudents];
+                } catch (e) {
+                    students = [...baseStudents];
+                }
             } else {
                 students = [...baseStudents];
             }
             
             if (saved) {
-                const savedData = JSON.parse(saved);
-                attendance = {};
-                students.forEach((_, index) => {
-                    // Use saved value if it exists, otherwise false
-                    attendance[index] = savedData[index] || false;
-                });
+                try {
+                    const savedData = JSON.parse(saved);
+                    attendance = {};
+                    students.forEach((_, index) => {
+                        // Use saved value if it exists, otherwise false
+                        attendance[index] = savedData[index] || false;
+                    });
+                } catch (e) {
+                    // Initialize all as absent for today
+                    attendance = {};
+                    students.forEach((_, index) => {
+                        attendance[index] = false;
+                    });
+                }
             } else {
                 // Initialize all as absent for today
                 attendance = {};
@@ -816,25 +828,31 @@
             return csv;
         }
         
-        // iPad-friendly copy using modern clipboard API with fallback
-        async function copyAttendance() {
+        // Simple copy function that works reliably on all devices
+        function copyAttendance() {
             const text = generateDetailedCSVText();
             
-            try {
-                // Use the modern async clipboard API (works on iPad Safari)
-                await navigator.clipboard.writeText(text);
-                showCopySuccess();
-            } catch (err) {
-                // Fallback for older devices: use textarea method
-                fallbackCopyText(text);
+            // Use the modern clipboard API if available
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopySuccess();
+                }).catch(() => {
+                    // If clipboard API fails, fall back to prompt method for iOS
+                    fallbackCopyPrompt(text);
+                });
+            } else {
+                // Fall back to prompt method for older iOS devices
+                fallbackCopyPrompt(text);
             }
         }
         
-        function fallbackCopyText(text) {
+        function fallbackCopyPrompt(text) {
+            // Create a prompt-like experience for iOS
             const textarea = document.createElement('textarea');
             textarea.value = text;
-            textarea.style.position = 'fixed';  // Avoid scrolling to bottom
-            textarea.style.opacity = '0';
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '0';
             document.body.appendChild(textarea);
             textarea.focus();
             textarea.select();
@@ -844,10 +862,11 @@
                 if (successful) {
                     showCopySuccess();
                 } else {
-                    alert('複製失敗，請手動選擇複製');
+                    // If copy fails, show text in a prompt-like dialog
+                    alert('請手動複製以下內容：\n\n' + text.substring(0, 200) + '...');
                 }
             } catch (err) {
-                alert('複製失敗，請手動選擇複製');
+                alert('請手動複製以下內容：\n\n' + text.substring(0, 200) + '...');
             }
             
             document.body.removeChild(textarea);
