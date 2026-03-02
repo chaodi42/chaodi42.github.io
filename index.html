@@ -474,6 +474,967 @@
                 <input type="email" id="studentEmail" placeholder="example@student.edu">
             </div>
             <div class="form-group">
+                <label for="studentPhone">電話</label>
+                <input type="text" id="studentPhone" placeholder="987-654-3210">
+            </div>
+            <div class="form-group">
+                <label for="studentGroup">團契</label>
+                <input type="text" id="studentGroup" placeholder="愛主團契">
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="markPresent" checked> 立即標記為出席
+                </label>
+            </div>
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="hideAddStudentModal()">取消</button>
+                <button class="add-confirm-btn" onclick="addStudent()">加入</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        ⚡ 點擊核取方塊記錄出席情況 • 可隨時加入新同學
+    </div>
+
+    <script>
+        // Base student data
+        const baseStudents = [
+    { name: "廖郁芬(老師)", email: "", phone: "", group: "", temporary: false },
+    { name: "謝美琴(老師)", email: "", phone: "", group: "", temporary: false },
+    { name: "張天翊(老師)", email: "", phone: "", group: "", temporary: false },
+    { name: "1 张婷", email: "Tzz0010@gmail.com", phone: "", group: "", temporary: false },
+    { name: "2 劉芳", email: "fliu08@gmail.com", phone: "", group: "", temporary: false },
+    { name: "3 田寶琴", email: "elitien@hotmail.com", phone: "", group: "", temporary: false },
+    { name: "4 王麗", email: "charlotteumass@gmail.com", phone: "", group: "", temporary: false },
+    { name: "5 李冬梅", email: "dli429@yahoo.com", phone: "", group: "", temporary: false },
+    { name: "6 Linda Gu", email: "Yun_j_gu@hotmail.com", phone: "", group: "", temporary: false },
+    { name: "7 吳瓊", email: "wufy125@gmail.com", phone: "", group: "", temporary: false },
+    { name: "8 張晏", email: "graciezh2023@gmail.com", phone: "", group: "", temporary: false },
+    { name: "9 張錦峰", email: "jinfeng@insilcom.com", phone: "", group: "", temporary: false },
+    { name: "10 趙婷婷", email: "zhaotinaya@yahoo.com", phone: "", group: "", temporary: false },
+    { name: "11 劉珂", email: "keliu0616@gmail.com", phone: "", group: "", temporary: false },
+    { name: "12 郝平", email: "pinghao0103@gmail.com", phone: "", group: "", temporary: false },
+    { name: "13 徐洪波", email: "oliviapanxu@hotmail.com", phone: "", group: "", temporary: false },
+    { name: "14 董寧", email: "kevindong@leaphomeservices.com", phone: "", group: "", temporary: false },
+    { name: "15 吳歴薰", email: "lihsu.wu@gmail.com", phone: "", group: "", temporary: false },
+    { name: "16 張美霓", email: "vmchen99@gmail.com", phone: "", group: "", temporary: false },
+    { name: "17 黃文琦", email: "peggywch138@gmail.com", phone: "", group: "", temporary: false },
+    { name: "18 司占杰", email: "zs2155@columbia.edu", phone: "", group: "", temporary: false },
+    { name: "19 田星", email: "xingtian727@gmail.com", phone: "", group: "", temporary: false },
+    { name: "20 Susan Pan", email: "panshu@bc.edu", phone: "", group: "", temporary: false },
+    { name: "21 陳國浩", email: "kgchin@gmail.com", phone: "", group: "", temporary: false },
+    { name: "22 鄒悠悠", email: "yoyozo92@gmail.com", phone: "", group: "", temporary: false },
+    { name: "23 崔廣琦", email: "kathytree@gmail.com", phone: "", group: "", temporary: false },
+    { name: "24 趙蕊", email: "ruizhao45@gmail.com", phone: "", group: "", temporary: false },
+    { name: "25 刘晖", email: "huiweston@gmail.com", phone: "", group: "", temporary: false },
+    { name: "26 Faye Chew", email: "fayechew07@gmail.com", phone: "", group: "", temporary: false },
+    { name: "27 楊婧", email: "", phone: "", group: "", temporary: false },
+    { name: "28 邸超", email: "dichao.bnu@gmail.com", phone: "", group: "", temporary: false },
+    { name: "29 吳凱", email: "", phone: "", group: "", temporary: false }
+        ];
+        
+        // Students array (includes temporary additions)
+        let students = [...baseStudents];
+        
+        // Initialize attendance object
+        let attendance = {};
+        
+        // Current date string for storage key
+        function getTodayKey() {
+            return new Date().toDateString();
+        }
+        
+        // Format date for display
+        function formatDate() {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            return new Date().toLocaleDateString('zh-HK', options);
+        }
+        
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (tab === 'attendance') {
+                document.querySelectorAll('.tab-button')[0].classList.add('active');
+                document.getElementById('attendanceTab').classList.add('active');
+                loadAttendance(); // Reload today's attendance when switching back
+            } else {
+                document.querySelectorAll('.tab-button')[1].classList.add('active');
+                document.getElementById('historyTab').classList.add('active');
+                loadHistory();
+            }
+        }
+        
+        // Load saved attendance for today
+        function loadAttendance() {
+            const today = getTodayKey();
+            const saved = localStorage.getItem('attendance_' + today);
+            
+            // Load temporary students if any
+            const savedTempStudents = localStorage.getItem('temporary_students');
+            if (savedTempStudents) {
+                const tempStudents = JSON.parse(savedTempStudents);
+                students = [...baseStudents, ...tempStudents];
+            } else {
+                students = [...baseStudents];
+            }
+            
+            if (saved) {
+                const savedData = JSON.parse(saved);
+                attendance = {};
+                students.forEach((_, index) => {
+                    // Use saved value if it exists, otherwise false
+                    attendance[index] = savedData[index] || false;
+                });
+            } else {
+                // Initialize all as absent for today
+                attendance = {};
+                students.forEach((_, index) => {
+                    attendance[index] = false;
+                });
+            }
+            
+            renderRoster();
+            updateSummary();
+        }
+        
+        // Render the student roster
+        function renderRoster() {
+            const rosterDiv = document.getElementById('studentList');
+            rosterDiv.innerHTML = '';
+            
+            students.forEach((student, index) => {
+                const li = document.createElement('li');
+                li.className = 'student-item' + (attendance[index] ? ' present' : '') + 
+                              (student.temporary ? ' temporary' : '');
+                
+                const deleteButton = student.temporary ? 
+                    `<span class="delete-student" onclick="deleteTemporaryStudent(${index})" title="刪除此同學">✖</span>` : '';
+                
+                const tempBadge = student.temporary ? 
+                    '<span class="student-badge">臨時</span>' : '';
+                
+                li.innerHTML = `
+                    <div class="student-info">
+                        <div class="student-name">
+                            ${student.name} ${tempBadge}
+                        </div>
+                        <div class="student-email">${student.email}</div>
+                    </div>
+                    <div class="attendance-checkbox">
+                        <input type="checkbox" 
+                               ${attendance[index] ? 'checked' : ''} 
+                               onchange="toggleAttendance(${index})"
+                               aria-label="出席記錄 for ${student.name}">
+                    </div>
+                    ${deleteButton}
+                `;
+                
+                rosterDiv.appendChild(li);
+            });
+        }
+        
+        // Toggle attendance for a student
+        function toggleAttendance(index) {
+            attendance[index] = !attendance[index];
+            
+            // Update the visual style
+            const items = document.querySelectorAll('.student-item');
+            if (items[index]) {
+                if (attendance[index]) {
+                    items[index].classList.add('present');
+                } else {
+                    items[index].classList.remove('present');
+                }
+            }
+            
+            updateSummary();
+            autoSave();
+        }
+        
+        // Mark all students as present
+        function markAllPresent() {
+            students.forEach((_, index) => {
+                attendance[index] = true;
+            });
+            renderRoster();
+            updateSummary();
+            autoSave();
+        }
+        
+        // Reset all attendance to unchecked
+        function resetAttendance() {
+            if (confirm('確定要重設所有出席記錄嗎？')) {
+                students.forEach((_, index) => {
+                    attendance[index] = false;
+                });
+                renderRoster();
+                updateSummary();
+                autoSave();
+            }
+        }
+        
+        // Show add student modal
+        function showAddStudentModal() {
+            document.getElementById('addStudentModal').classList.add('active');
+            document.getElementById('studentName').focus();
+        }
+        
+        // Hide add student modal
+        function hideAddStudentModal() {
+            document.getElementById('addStudentModal').classList.remove('active');
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentEmail').value = '';
+            document.getElementById('studentPhone').value = '';
+            document.getElementById('studentGroup').value = '';
+            document.getElementById('markPresent').checked = true;
+        }
+        
+        // Add new student
+        function addStudent() {
+            const name = document.getElementById('studentName').value.trim();
+            const email = document.getElementById('studentEmail').value.trim();
+            const phone = document.getElementById('studentPhone').value.trim();
+            const group = document.getElementById('studentGroup').value.trim();
+            const markPresent = document.getElementById('markPresent').checked;
+            
+            if (!name) {
+                alert('請填寫姓名');
+                return;
+            }
+            
+            // Create new student
+            const newStudent = {
+                name: name,
+                email: email,
+                phone: phone,
+                group: group,
+                temporary: true
+            };
+            
+            // Add to students array
+            students.push(newStudent);
+            const newIndex = students.length - 1;
+            
+            // Set attendance
+            attendance[newIndex] = markPresent;
+            
+            // Save temporary students to localStorage
+            const tempStudents = students.filter(s => s.temporary);
+            localStorage.setItem('temporary_students', JSON.stringify(tempStudents));
+            
+            // Re-render and save
+            renderRoster();
+            updateSummary();
+            autoSave();
+            
+            // Close modal
+            hideAddStudentModal();
+            
+            // Show confirmation
+            alert(`已加入 ${name}`);
+        }
+        
+        // Delete temporary student
+        function deleteTemporaryStudent(index) {
+            if (confirm(`確定要刪除 ${students[index].name} 嗎？`)) {
+                // Remove from students array
+                students.splice(index, 1);
+                
+                // Rebuild attendance object
+                const newAttendance = {};
+                students.forEach((_, i) => {
+                    // Shift attendance for subsequent students
+                    if (i < index) {
+                        newAttendance[i] = attendance[i];
+                    } else {
+                        newAttendance[i] = attendance[i + 1] || false;
+                    }
+                });
+                attendance = newAttendance;
+                
+                // Save temporary students
+                const tempStudents = students.filter(s => s.temporary);
+                localStorage.setItem('temporary_students', JSON.stringify(tempStudents));
+                
+                // Re-render and save
+                renderRoster();
+                updateSummary();
+                autoSave();
+            }
+        }
+        
+        // Save attendance to localStorage
+        function saveAttendance() {
+            const today = getTodayKey();
+            localStorage.setItem('attendance_' + today, JSON.stringify(attendance));
+            
+            // Show save confirmation
+            const saveBtn = document.querySelector('.save-btn');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = '✓ 已儲存';
+            saveBtn.style.backgroundColor = '#27ae60';
+            
+            setTimeout(() => {
+                saveBtn.textContent = originalText;
+                saveBtn.style.backgroundColor = '#3498db';
+            }, 2000);
+        }
+        
+        // Auto-save (silent)
+        function autoSave() {
+            const today = getTodayKey();
+            localStorage.setItem('attendance_' + today, JSON.stringify(attendance));
+        }
+        
+        // Update summary statistics
+        function updateSummary() {
+            const presentCount = Object.values(attendance).filter(value => value).length;
+            document.getElementById('presentCount').textContent = presentCount;
+            document.getElementById('totalStudents').textContent = students.length;
+            document.getElementById('currentDate').textContent = formatDate();
+        }
+        
+        // Generate detailed CSV text for today's attendance (including all fields)
+        function generateDetailedCSVText() {
+            const todayStr = new Date().toLocaleDateString('zh-HK');
+            // Extended header including group, phone
+            let csv = '日期,學生姓名,電郵,團契,電話,出席狀態(1/0)\n';
+
+            students.forEach((student, index) => {
+                const status = attendance[index] ? '1' : '0';
+                // Escape fields if they contain commas (simple wrap in quotes)
+                const name = student.name.includes(',') ? `"${student.name}"` : student.name;
+                const email = student.email.includes(',') ? `"${student.email}"` : student.email;
+                const group = student.group?.includes(',') ? `"${student.group}"` : (student.group || '');
+                const phone = student.phone?.includes(',') ? `"${student.phone}"` : (student.phone || '');
+                csv += `"${todayStr}",${name},${email},${group},${phone},${status}\n`;
+            });
+            return csv;
+        }
+        
+        // iPad-friendly copy using modern clipboard API with fallback
+        async function copyAttendance() {
+            const text = generateDetailedCSVText();
+            
+            try {
+                // Use the modern async clipboard API (works on iPad Safari)
+                await navigator.clipboard.writeText(text);
+                showCopySuccess();
+            } catch (err) {
+                // Fallback for older devices: use textarea method
+                fallbackCopyText(text);
+            }
+        }
+        
+        function fallbackCopyText(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';  // Avoid scrolling to bottom
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopySuccess();
+                } else {
+                    alert('複製失敗，請手動選擇複製');
+                }
+            } catch (err) {
+                alert('複製失敗，請手動選擇複製');
+            }
+            
+            document.body.removeChild(textarea);
+        }
+        
+        function showCopySuccess() {
+            const copyBtn = document.querySelector('.copy-btn');
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = '✓ 已複製';
+            copyBtn.style.backgroundColor = '#27ae60';
+            
+            setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.style.backgroundColor = '#5856d6';
+            }, 2000);
+        }
+        
+        // Email attendance with full details (using same detailed CSV)
+        function emailAttendance() {
+            const subject = `出席記錄 - ${formatDate()}`;
+            const body = generateDetailedCSVText();  // Now includes group, phone
+            
+            // Create mailto link
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+        
+        // Load history
+        function loadHistory() {
+            const historyList = document.getElementById('historyList');
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('attendance_'));
+            
+            if (keys.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; color: #7f8c8d;">暫無歷史記錄</p>';
+                return;
+            }
+            
+            // Sort by date (newest first)
+            keys.sort().reverse();
+            
+            let html = '<h3>📜 過往出席記錄</h3>';
+            keys.forEach(key => {
+                const dateStr = key.replace('attendance_', '');
+                const data = JSON.parse(localStorage.getItem(key));
+                const presentCount = Object.values(data).filter(v => v).length;
+                const totalCount = Object.keys(data).length;
+                
+                html += `
+                    <div class="history-item" onclick="viewHistoryDetail('${dateStr}')">
+                        <div class="history-date">📅 ${new Date(dateStr).toLocaleDateString('zh-HK', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                        <div class="history-stats">
+                            <span>✅ 出席: ${presentCount}/${totalCount}</span>
+                            <span>❌ 缺席: ${totalCount - presentCount}/${totalCount}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            historyList.innerHTML = html;
+            document.getElementById('historyDetail').style.display = 'none';
+        }
+        
+        // View history detail
+        function viewHistoryDetail(dateStr) {
+            const data = JSON.parse(localStorage.getItem('attendance_' + dateStr));
+            const detailDiv = document.getElementById('historyDetail');
+            
+            let html = `
+                <button class="back-button" onclick="loadHistory()">← 返回列表</button>
+                <h3>📅 ${new Date(dateStr).toLocaleDateString('zh-HK', { year: 'numeric', month: 'long', day: 'numeric' })}</h3>
+                <button class="delete-btn" onclick="deleteHistory('${dateStr}')">🗑️ 刪除記錄</button>
+                <ul class="student-list" style="margin-top: 20px;">
+            `;
+            
+            students.forEach((student, index) => {
+                const isPresent = data[index] || false;
+                html += `
+                    <li class="student-item ${isPresent ? 'present' : ''}" style="opacity: ${isPresent ? 1 : 0.7}">
+                        <div class="student-info">
+                            <div class="student-name">${student.name}</div>
+                            <div class="student-email">${student.email}</div>
+                        </div>
+                        <div style="margin-right: 20px; font-weight: bold;">
+                            ${isPresent ? '✅ 出席' : '❌ 缺席'}
+                        </div>
+                    </li>
+                `;
+            });
+            
+            html += '</ul>';
+            detailDiv.innerHTML = html;
+            detailDiv.style.display = 'block';
+            document.querySelector('.history-list').style.display = 'none';
+        }
+        
+        // Delete history record
+        function deleteHistory(dateStr) {
+            if (confirm('確定要刪除這天的記錄嗎？')) {
+                localStorage.removeItem('attendance_' + dateStr);
+                loadHistory();
+            }
+        }
+        
+        // Export to CSV (now includes all fields)
+        function exportToCSV() {
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('attendance_'));
+            
+            // Create CSV header with all fields
+            let csv = '日期,學生姓名,電郵,團契,電話,出席狀態\n';
+            
+            keys.forEach(key => {
+                const dateStr = key.replace('attendance_', '');
+                const data = JSON.parse(localStorage.getItem(key));
+                
+                students.forEach((student, index) => {
+                    if (data[index] !== undefined) {
+                        const status = data[index] ? '1' : '0';
+                        const dateLocal = new Date(dateStr).toLocaleDateString('zh-HK');
+                        // Escape fields
+                        const name = student.name.includes(',') ? `"${student.name}"` : student.name;
+                        const email = student.email.includes(',') ? `"${student.email}"` : student.email;
+                        const group = student.group?.includes(',') ? `"${student.group}"` : (student.group || '');
+                        const phone = student.phone?.includes(',') ? `"${student.phone}"` : (student.phone || '');
+                        csv += `"${dateLocal}",${name},${email},${group},${phone},${status}\n`;
+                    }
+                });
+            });
+            
+            // Download CSV file
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '出席記錄_' + new Date().toISOString().slice(0,10) + '.csv';
+            link.click();
+        }
+        
+        // Initialize the page
+        document.getElementById('currentDate').textContent = formatDate();
+        loadAttendance();
+        
+        // Close modal if clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('addStudentModal');
+            if (event.target === modal) {
+                hideAddStudentModal();
+            }
+        }
+    </script>
+</body>
+</html>            transition: all 0.2s;
+        }
+        
+        .tab-button.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .date-header {
+            text-align: center;
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .student-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .student-item {
+            background-color: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+        
+        .student-item.present {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4caf50;
+        }
+        
+        .student-item.temporary {
+            border: 2px dashed #f39c12;
+            background-color: #fff3e0;
+        }
+        
+        .student-info {
+            flex: 1;
+        }
+        
+        .student-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+        
+        .student-email {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            font-family: monospace;
+        }
+        
+        .student-badge {
+            font-size: 0.7em;
+            background-color: #f39c12;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 10px;
+            display: inline-block;
+        }
+        
+        .attendance-checkbox {
+            margin-right: 20px;
+            transform: scale(1.5);
+            cursor: pointer;
+        }
+        
+        .attendance-checkbox input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .delete-student {
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1.2em;
+            margin-left: 10px;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        
+        .delete-student:hover {
+            opacity: 1;
+        }
+        
+        .summary {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .summary-stats {
+            font-size: 1.1em;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .summary-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s;
+        }
+        
+        .save-btn {
+            background-color: #3498db;
+            color: white;
+            flex: 1;
+        }
+        
+        .save-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+            flex: 1;
+        }
+        
+        .reset-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .mark-all-btn {
+            background-color: #f39c12;
+            color: white;
+            flex: 1;
+        }
+        
+        .mark-all-btn:hover {
+            background-color: #d35400;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed #ecf0f1;
+        }
+        
+        .email-btn {
+            background-color: #007aff;
+            color: white;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .copy-btn {
+            background-color: #5856d6;
+            color: white;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .add-student-btn {
+            background-color: #27ae60;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            margin-top: 20px;
+            border: 2px dashed #27ae60;
+            background-color: white;
+            color: #27ae60;
+        }
+        
+        .add-student-btn:hover {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .modal-content h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ecf0f1;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .modal-buttons button {
+            padding: 10px 20px;
+        }
+        
+        .cancel-btn {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .add-confirm-btn {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        /* History Page Styles */
+        .history-list {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .history-item {
+            border-bottom: 1px solid #ecf0f1;
+            padding: 15px 0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .history-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-date {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .history-stats {
+            display: flex;
+            gap: 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .detail-view {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .back-button {
+            background-color: #95a5a6;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        .export-btn {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #95a5a6;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>自我認識與全人發展</h1>
+    
+    <div class="tab-bar">
+        <button class="tab-button active" onclick="switchTab('attendance')">📋 出勤記錄</button>
+        <button class="tab-button" onclick="switchTab('history')">📊 匯總記錄</button>
+    </div>
+    
+    <!-- Attendance Tab -->
+    <div id="attendanceTab" class="tab-content active">
+        <div class="date-header">
+            📅 <span id="currentDate"></span>
+        </div>
+        
+        <ul class="student-list" id="studentList">
+            <!-- Students will be inserted here by JavaScript -->
+        </ul>
+        
+        <button class="add-student-btn" onclick="showAddStudentModal()">
+            ➕ 加入新同學
+        </button>
+        
+        <div class="summary">
+            <div class="summary-stats">
+                <span id="presentCount">0</span>/<span id="totalStudents">10</span> 出席
+            </div>
+            
+            <div class="summary-buttons">
+                <button class="mark-all-btn" onclick="markAllPresent()">全體出席</button>
+                <button class="reset-btn" onclick="resetAttendance()">重設</button>
+                <button class="save-btn" onclick="saveAttendance()">保存</button>
+            </div>
+            
+            <div class="share-buttons">
+                <button class="email-btn" onclick="emailAttendance()">
+                    📧 Email
+                </button>
+                <button class="copy-btn" onclick="copyAttendance()">
+                    📋 Copy
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- History Tab -->
+    <div id="historyTab" class="tab-content">
+        <div class="history-list" id="historyList">
+            <!-- History items will be inserted here -->
+        </div>
+        <button class="export-btn" onclick="exportToCSV()">📥 下載所有記錄 (CSV)</button>
+        <div id="historyDetail" class="detail-view" style="display: none;"></div>
+    </div>
+    
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <h2>加入新同學</h2>
+            <div class="form-group">
+                <label for="studentName">姓名</label>
+                <input type="text" id="studentName" placeholder="例如：陳小明">
+            </div>
+            <div class="form-group">
+                <label for="studentEmail">電郵</label>
+                <input type="email" id="studentEmail" placeholder="example@student.edu">
+            </div>
+            <div class="form-group">
                 <label for="studentEmail">電話</label>
                 <input type="phone" id="studentPhone" placeholder="987-654-3210">
             </div>
