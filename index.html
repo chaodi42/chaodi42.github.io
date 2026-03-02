@@ -432,7 +432,7 @@
         
         <div class="summary">
             <div class="summary-stats">
-                <span id="presentCount">0</span>/<span id="totalStudents">10</span> 出席
+                <span id="presentCount">0</span>/<span id="totalStudents">29</span> 出席
             </div>
             
             <div class="summary-buttons">
@@ -498,175 +498,179 @@
     </div>
 
     <script>
-        // Base student data
+        // Base student data - simplified and guaranteed to work
         const baseStudents = [
-    { name: "廖郁芬(老師)", email: "", phone: "", group: "", temporary: false },
-    { name: "謝美琴(老師)", email: "", phone: "", group: "", temporary: false },
-    { name: "張天翊(老師)", email: "", phone: "", group: "", temporary: false },
-    { name: "1 张婷", email: "Tzz0010@gmail.com", phone: "", group: "", temporary: false },
-    { name: "2 劉芳", email: "fliu08@gmail.com", phone: "", group: "", temporary: false },
-    { name: "3 田寶琴", email: "elitien@hotmail.com", phone: "", group: "", temporary: false },
-    { name: "4 王麗", email: "charlotteumass@gmail.com", phone: "", group: "", temporary: false },
-    { name: "5 李冬梅", email: "dli429@yahoo.com", phone: "", group: "", temporary: false },
-    { name: "6 Linda Gu", email: "Yun_j_gu@hotmail.com", phone: "", group: "", temporary: false },
-    { name: "7 吳瓊", email: "wufy125@gmail.com", phone: "", group: "", temporary: false },
-    { name: "8 張晏", email: "graciezh2023@gmail.com", phone: "", group: "", temporary: false },
-    { name: "9 張錦峰", email: "jinfeng@insilcom.com", phone: "", group: "", temporary: false },
-    { name: "10 趙婷婷", email: "zhaotinaya@yahoo.com", phone: "", group: "", temporary: false },
-    { name: "11 劉珂", email: "keliu0616@gmail.com", phone: "", group: "", temporary: false },
-    { name: "12 郝平", email: "pinghao0103@gmail.com", phone: "", group: "", temporary: false },
-    { name: "13 徐洪波", email: "oliviapanxu@hotmail.com", phone: "", group: "", temporary: false },
-    { name: "14 董寧", email: "kevindong@leaphomeservices.com", phone: "", group: "", temporary: false },
-    { name: "15 吳歴薰", email: "lihsu.wu@gmail.com", phone: "", group: "", temporary: false },
-    { name: "16 張美霓", email: "vmchen99@gmail.com", phone: "", group: "", temporary: false },
-    { name: "17 黃文琦", email: "peggywch138@gmail.com", phone: "", group: "", temporary: false },
-    { name: "18 司占杰", email: "zs2155@columbia.edu", phone: "", group: "", temporary: false },
-    { name: "19 田星", email: "xingtian727@gmail.com", phone: "", group: "", temporary: false },
-    { name: "20 Susan Pan", email: "panshu@bc.edu", phone: "", group: "", temporary: false },
-    { name: "21 陳國浩", email: "kgchin@gmail.com", phone: "", group: "", temporary: false },
-    { name: "22 鄒悠悠", email: "yoyozo92@gmail.com", phone: "", group: "", temporary: false },
-    { name: "23 崔廣琦", email: "kathytree@gmail.com", phone: "", group: "", temporary: false },
-    { name: "24 趙蕊", email: "ruizhao45@gmail.com", phone: "", group: "", temporary: false },
-    { name: "25 刘晖", email: "huiweston@gmail.com", phone: "", group: "", temporary: false },
-    { name: "26 Faye Chew", email: "fayechew07@gmail.com", phone: "", group: "", temporary: false },
-    { name: "27 楊婧", email: "", phone: "", group: "", temporary: false },
-    { name: "28 邸超", email: "dichao.bnu@gmail.com", phone: "", group: "", temporary: false },
-    { name: "29 吳凱", email: "", phone: "", group: "", temporary: false }
+            { name: "廖郁芬(老師)", email: "", phone: "", group: "", temporary: false },
+            { name: "謝美琴(老師)", email: "", phone: "", group: "", temporary: false },
+            { name: "張天翊(老師)", email: "", phone: "", group: "", temporary: false },
+            { name: "1 张婷", email: "Tzz0010@gmail.com", phone: "", group: "", temporary: false },
+            { name: "2 劉芳", email: "fliu08@gmail.com", phone: "", group: "", temporary: false },
+            { name: "3 田寶琴", email: "elitien@hotmail.com", phone: "", group: "", temporary: false },
+            { name: "4 王麗", email: "charlotteumass@gmail.com", phone: "", group: "", temporary: false },
+            { name: "5 李冬梅", email: "dli429@yahoo.com", phone: "", group: "", temporary: false },
+            { name: "6 Linda Gu", email: "Yun_j_gu@hotmail.com", phone: "", group: "", temporary: false },
+            { name: "7 吳瓊", email: "wufy125@gmail.com", phone: "", group: "", temporary: false },
+            { name: "8 張晏", email: "graciezh2023@gmail.com", phone: "", group: "", temporary: false },
+            { name: "9 張錦峰", email: "jinfeng@insilcom.com", phone: "", group: "", temporary: false },
+            { name: "10 趙婷婷", email: "zhaotinaya@yahoo.com", phone: "", group: "", temporary: false },
+            { name: "11 劉珂", email: "keliu0616@gmail.com", phone: "", group: "", temporary: false },
+            { name: "12 郝平", email: "pinghao0103@gmail.com", phone: "", group: "", temporary: false },
+            { name: "13 徐洪波", email: "oliviapanxu@hotmail.com", phone: "", group: "", temporary: false },
+            { name: "14 董寧", email: "kevindong@leaphomeservices.com", phone: "", group: "", temporary: false },
+            { name: "15 吳歴薰", email: "lihsu.wu@gmail.com", phone: "", group: "", temporary: false },
+            { name: "16 張美霓", email: "vmchen99@gmail.com", phone: "", group: "", temporary: false },
+            { name: "17 黃文琦", email: "peggywch138@gmail.com", phone: "", group: "", temporary: false },
+            { name: "18 司占杰", email: "zs2155@columbia.edu", phone: "", group: "", temporary: false },
+            { name: "19 田星", email: "xingtian727@gmail.com", phone: "", group: "", temporary: false },
+            { name: "20 Susan Pan", email: "panshu@bc.edu", phone: "", group: "", temporary: false },
+            { name: "21 陳國浩", email: "kgchin@gmail.com", phone: "", group: "", temporary: false },
+            { name: "22 鄒悠悠", email: "yoyozo92@gmail.com", phone: "", group: "", temporary: false },
+            { name: "23 崔廣琦", email: "kathytree@gmail.com", phone: "", group: "", temporary: false },
+            { name: "24 趙蕊", email: "ruizhao45@gmail.com", phone: "", group: "", temporary: false },
+            { name: "25 刘晖", email: "huiweston@gmail.com", phone: "", group: "", temporary: false },
+            { name: "26 Faye Chew", email: "fayechew07@gmail.com", phone: "", group: "", temporary: false },
+            { name: "27 楊婧", email: "", phone: "", group: "", temporary: false },
+            { name: "28 邸超", email: "dichao.bnu@gmail.com", phone: "", group: "", temporary: false },
+            { name: "29 吳凱", email: "", phone: "", group: "", temporary: false }
         ];
         
-        // Students array (includes temporary additions)
-        let students = [...baseStudents];
-        
-        // Initialize attendance object
+        // Simple state
+        let students = [];
         let attendance = {};
         
-        // Current date string for storage key
-        function getTodayKey() {
-            return new Date().toDateString();
+        // Initialize - simplified for cross-device compatibility
+        function init() {
+            // Copy base students
+            students = baseStudents.map(s => ({...s}));
+            
+            // Initialize attendance (all false)
+            students.forEach((_, index) => {
+                attendance[index] = false;
+            });
+            
+            // Try to load saved data
+            try {
+                const today = new Date().toDateString();
+                const saved = localStorage.getItem('attendance_' + today);
+                if (saved) {
+                    const savedData = JSON.parse(saved);
+                    Object.keys(savedData).forEach(key => {
+                        if (attendance.hasOwnProperty(key)) {
+                            attendance[key] = savedData[key];
+                        }
+                    });
+                }
+                
+                // Load temporary students
+                const savedTemp = localStorage.getItem('temporary_students');
+                if (savedTemp) {
+                    const tempStudents = JSON.parse(savedTemp);
+                    students = [...baseStudents, ...tempStudents];
+                    // Re-initialize attendance for all students
+                    const newAttendance = {};
+                    students.forEach((_, index) => {
+                        newAttendance[index] = false;
+                    });
+                    // Try to restore saved attendance for today
+                    if (saved) {
+                        const savedData = JSON.parse(saved);
+                        Object.keys(savedData).forEach(key => {
+                            if (newAttendance.hasOwnProperty(key)) {
+                                newAttendance[key] = savedData[key];
+                            }
+                        });
+                    }
+                    attendance = newAttendance;
+                }
+            } catch (e) {
+                console.log('Error loading data:', e);
+            }
+            
+            // Update UI
+            updateDate();
+            renderRoster();
+            updateSummary();
         }
         
-        // Format date for display
+        // Format date
         function formatDate() {
             const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
             return new Date().toLocaleDateString('zh-HK', options);
         }
         
-        // Tab switching
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            if (tab === 'attendance') {
-                document.querySelectorAll('.tab-button')[0].classList.add('active');
-                document.getElementById('attendanceTab').classList.add('active');
-                loadAttendance(); // Reload today's attendance when switching back
-            } else {
-                document.querySelectorAll('.tab-button')[1].classList.add('active');
-                document.getElementById('historyTab').classList.add('active');
-                loadHistory();
-            }
+        function updateDate() {
+            document.getElementById('currentDate').textContent = formatDate();
         }
         
-        // Load saved attendance for today
-        function loadAttendance() {
-            const today = getTodayKey();
-            const saved = localStorage.getItem('attendance_' + today);
-            
-            // Load temporary students if any
-            const savedTempStudents = localStorage.getItem('temporary_students');
-            if (savedTempStudents) {
-                try {
-                    const tempStudents = JSON.parse(savedTempStudents);
-                    students = [...baseStudents, ...tempStudents];
-                } catch (e) {
-                    students = [...baseStudents];
-                }
-            } else {
-                students = [...baseStudents];
-            }
-            
-            if (saved) {
-                try {
-                    const savedData = JSON.parse(saved);
-                    attendance = {};
-                    students.forEach((_, index) => {
-                        // Use saved value if it exists, otherwise false
-                        attendance[index] = savedData[index] || false;
-                    });
-                } catch (e) {
-                    // Initialize all as absent for today
-                    attendance = {};
-                    students.forEach((_, index) => {
-                        attendance[index] = false;
-                    });
-                }
-            } else {
-                // Initialize all as absent for today
-                attendance = {};
-                students.forEach((_, index) => {
-                    attendance[index] = false;
-                });
-            }
-            
-            renderRoster();
-            updateSummary();
-        }
-        
-        // Render the student roster
+        // Render roster - simplified
         function renderRoster() {
             const rosterDiv = document.getElementById('studentList');
+            if (!rosterDiv) return;
+            
             rosterDiv.innerHTML = '';
             
             students.forEach((student, index) => {
                 const li = document.createElement('li');
-                li.className = 'student-item' + (attendance[index] ? ' present' : '') + 
-                              (student.temporary ? ' temporary' : '');
+                li.className = 'student-item' + (attendance[index] ? ' present' : '');
+                if (student.temporary) {
+                    li.className += ' temporary';
+                }
                 
-                const deleteButton = student.temporary ? 
-                    `<span class="delete-student" onclick="deleteTemporaryStudent(${index})" title="刪除此同學">✖</span>` : '';
+                // Create elements safely
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'student-info';
                 
-                const tempBadge = student.temporary ? 
-                    '<span class="student-badge">臨時</span>' : '';
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'student-name';
+                nameDiv.textContent = student.name;
+                if (student.temporary) {
+                    const badge = document.createElement('span');
+                    badge.className = 'student-badge';
+                    badge.textContent = '臨時';
+                    nameDiv.appendChild(badge);
+                }
                 
-                li.innerHTML = `
-                    <div class="student-info">
-                        <div class="student-name">
-                            ${student.name} ${tempBadge}
-                        </div>
-                        <div class="student-email">${student.email}</div>
-                    </div>
-                    <div class="attendance-checkbox">
-                        <input type="checkbox" 
-                               ${attendance[index] ? 'checked' : ''} 
-                               onchange="toggleAttendance(${index})"
-                               aria-label="出席記錄 for ${student.name}">
-                    </div>
-                    ${deleteButton}
-                `;
+                const emailDiv = document.createElement('div');
+                emailDiv.className = 'student-email';
+                emailDiv.textContent = student.email || '';
+                
+                infoDiv.appendChild(nameDiv);
+                infoDiv.appendChild(emailDiv);
+                
+                const checkboxDiv = document.createElement('div');
+                checkboxDiv.className = 'attendance-checkbox';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = attendance[index] || false;
+                checkbox.setAttribute('onclick', `toggleAttendance(${index})`);
+                checkboxDiv.appendChild(checkbox);
+                
+                li.appendChild(infoDiv);
+                li.appendChild(checkboxDiv);
+                
+                if (student.temporary) {
+                    const deleteSpan = document.createElement('span');
+                    deleteSpan.className = 'delete-student';
+                    deleteSpan.textContent = '✖';
+                    deleteSpan.setAttribute('onclick', `deleteTemporaryStudent(${index})`);
+                    deleteSpan.title = '刪除此同學';
+                    li.appendChild(deleteSpan);
+                }
                 
                 rosterDiv.appendChild(li);
             });
         }
         
-        // Toggle attendance for a student
+        // Toggle attendance
         function toggleAttendance(index) {
             attendance[index] = !attendance[index];
-            
-            // Update the visual style
-            const items = document.querySelectorAll('.student-item');
-            if (items[index]) {
-                if (attendance[index]) {
-                    items[index].classList.add('present');
-                } else {
-                    items[index].classList.remove('present');
-                }
-            }
-            
+            renderRoster();
             updateSummary();
             autoSave();
         }
         
-        // Mark all students as present
+        // Mark all present
         function markAllPresent() {
             students.forEach((_, index) => {
                 attendance[index] = true;
@@ -676,7 +680,7 @@
             autoSave();
         }
         
-        // Reset all attendance to unchecked
+        // Reset attendance
         function resetAttendance() {
             if (confirm('確定要重設所有出席記錄嗎？')) {
                 students.forEach((_, index) => {
@@ -688,23 +692,51 @@
             }
         }
         
-        // Show add student modal
+        // Update summary
+        function updateSummary() {
+            const presentCount = Object.values(attendance).filter(v => v).length;
+            document.getElementById('presentCount').textContent = presentCount;
+            document.getElementById('totalStudents').textContent = students.length;
+        }
+        
+        // Auto save
+        function autoSave() {
+            try {
+                const today = new Date().toDateString();
+                localStorage.setItem('attendance_' + today, JSON.stringify(attendance));
+            } catch (e) {
+                console.log('Error saving:', e);
+            }
+        }
+        
+        // Save attendance (with feedback)
+        function saveAttendance() {
+            autoSave();
+            const saveBtn = document.querySelector('.save-btn');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = '✓ 已儲存';
+            saveBtn.style.backgroundColor = '#27ae60';
+            setTimeout(() => {
+                saveBtn.textContent = originalText;
+                saveBtn.style.backgroundColor = '#3498db';
+            }, 2000);
+        }
+        
+        // Modal functions
         function showAddStudentModal() {
             document.getElementById('addStudentModal').classList.add('active');
             document.getElementById('studentName').focus();
         }
         
-        // Hide add student modal
         function hideAddStudentModal() {
             document.getElementById('addStudentModal').classList.remove('active');
             document.getElementById('studentName').value = '';
             document.getElementById('studentEmail').value = '';
             document.getElementById('studentPhone').value = '';
             document.getElementById('studentGroup').value = '';
-            document.getElementById('markPresent').checked = true;
         }
         
-        // Add new student
+        // Add student
         function addStudent() {
             const name = document.getElementById('studentName').value.trim();
             const email = document.getElementById('studentEmail').value.trim();
@@ -717,7 +749,6 @@
                 return;
             }
             
-            // Create new student
             const newStudent = {
                 name: name,
                 email: email,
@@ -726,150 +757,80 @@
                 temporary: true
             };
             
-            // Add to students array
             students.push(newStudent);
             const newIndex = students.length - 1;
-            
-            // Set attendance
             attendance[newIndex] = markPresent;
             
-            // Save temporary students to localStorage
-            const tempStudents = students.filter(s => s.temporary);
-            localStorage.setItem('temporary_students', JSON.stringify(tempStudents));
+            try {
+                const tempStudents = students.filter(s => s.temporary);
+                localStorage.setItem('temporary_students', JSON.stringify(tempStudents));
+            } catch (e) {
+                console.log('Error saving temp student:', e);
+            }
             
-            // Re-render and save
             renderRoster();
             updateSummary();
             autoSave();
-            
-            // Close modal
             hideAddStudentModal();
-            
-            // Show confirmation
             alert(`已加入 ${name}`);
         }
         
         // Delete temporary student
         function deleteTemporaryStudent(index) {
             if (confirm(`確定要刪除 ${students[index].name} 嗎？`)) {
-                // Remove from students array
                 students.splice(index, 1);
-                
-                // Rebuild attendance object
                 const newAttendance = {};
                 students.forEach((_, i) => {
-                    // Shift attendance for subsequent students
-                    if (i < index) {
-                        newAttendance[i] = attendance[i];
-                    } else {
-                        newAttendance[i] = attendance[i + 1] || false;
-                    }
+                    newAttendance[i] = attendance[i] || false;
                 });
                 attendance = newAttendance;
                 
-                // Save temporary students
-                const tempStudents = students.filter(s => s.temporary);
-                localStorage.setItem('temporary_students', JSON.stringify(tempStudents));
+                try {
+                    const tempStudents = students.filter(s => s.temporary);
+                    localStorage.setItem('temporary_students', JSON.stringify(tempStudents));
+                } catch (e) {
+                    console.log('Error saving temp students:', e);
+                }
                 
-                // Re-render and save
                 renderRoster();
                 updateSummary();
                 autoSave();
             }
         }
         
-        // Save attendance to localStorage
-        function saveAttendance() {
-            const today = getTodayKey();
-            localStorage.setItem('attendance_' + today, JSON.stringify(attendance));
-            
-            // Show save confirmation
-            const saveBtn = document.querySelector('.save-btn');
-            const originalText = saveBtn.textContent;
-            saveBtn.textContent = '✓ 已儲存';
-            saveBtn.style.backgroundColor = '#27ae60';
-            
-            setTimeout(() => {
-                saveBtn.textContent = originalText;
-                saveBtn.style.backgroundColor = '#3498db';
-            }, 2000);
-        }
-        
-        // Auto-save (silent)
-        function autoSave() {
-            const today = getTodayKey();
-            localStorage.setItem('attendance_' + today, JSON.stringify(attendance));
-        }
-        
-        // Update summary statistics
-        function updateSummary() {
-            const presentCount = Object.values(attendance).filter(value => value).length;
-            document.getElementById('presentCount').textContent = presentCount;
-            document.getElementById('totalStudents').textContent = students.length;
-            document.getElementById('currentDate').textContent = formatDate();
-        }
-        
-        // Generate detailed CSV text for today's attendance - ORDER: name, email, phone, group
-        function generateDetailedCSVText() {
+        // Generate CSV text
+        function generateCSVText() {
             const todayStr = new Date().toLocaleDateString('zh-HK');
-            // Header order: 日期,姓名,電郵,電話,團契,出席狀態(1/0)
-            let csv = '日期,姓名,電郵,電話,團契,出席狀態(1/0)\n';
-
+            let csv = '日期,姓名,電郵,電話,團契,出席狀態\n';
+            
             students.forEach((student, index) => {
                 const status = attendance[index] ? '1' : '0';
-                // Escape fields if they contain commas (simple wrap in quotes)
-                const name = student.name.includes(',') ? `"${student.name}"` : student.name;
-                const email = student.email.includes(',') ? `"${student.email}"` : student.email;
-                const phone = student.phone?.includes(',') ? `"${student.phone}"` : (student.phone || '');
-                const group = student.group?.includes(',') ? `"${student.group}"` : (student.group || '');
-                // Order: date, name, email, phone, group, status
-                csv += `"${todayStr}",${name},${email},${phone},${group},${status}\n`;
+                csv += `"${todayStr}","${student.name}","${student.email || ''}","${student.phone || ''}","${student.group || ''}",${status}\n`;
             });
+            
             return csv;
         }
         
-        // Simple copy function that works reliably on all devices
+        // Copy function - simplified for iOS
         function copyAttendance() {
-            const text = generateDetailedCSVText();
+            const text = generateCSVText();
             
-            // Use the modern clipboard API if available
+            // Use modern clipboard API if available
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text).then(() => {
                     showCopySuccess();
                 }).catch(() => {
-                    // If clipboard API fails, fall back to prompt method for iOS
-                    fallbackCopyPrompt(text);
+                    // If clipboard fails, show text for manual copy
+                    promptForManualCopy(text);
                 });
             } else {
-                // Fall back to prompt method for older iOS devices
-                fallbackCopyPrompt(text);
+                promptForManualCopy(text);
             }
         }
         
-        function fallbackCopyPrompt(text) {
-            // Create a prompt-like experience for iOS
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'fixed';
-            textarea.style.left = '-9999px';
-            textarea.style.top = '0';
-            document.body.appendChild(textarea);
-            textarea.focus();
-            textarea.select();
-            
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    showCopySuccess();
-                } else {
-                    // If copy fails, show text in a prompt-like dialog
-                    alert('請手動複製以下內容：\n\n' + text.substring(0, 200) + '...');
-                }
-            } catch (err) {
-                alert('請手動複製以下內容：\n\n' + text.substring(0, 200) + '...');
-            }
-            
-            document.body.removeChild(textarea);
+        function promptForManualCopy(text) {
+            // Show a portion of text and instruct to copy
+            alert('請手動複製 (長按選擇文字後複製):\n\n' + text.substring(0, 300) + '...');
         }
         
         function showCopySuccess() {
@@ -884,44 +845,69 @@
             }, 2000);
         }
         
-        // Email attendance with full details (ORDER: name, email, phone, group)
+        // Email function
         function emailAttendance() {
             const subject = `出席記錄 - ${formatDate()}`;
-            const body = generateDetailedCSVText();  // Now uses correct order
-            
-            // Create mailto link
+            const body = generateCSVText();
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         }
         
-        // Load history
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (tab === 'attendance') {
+                document.querySelectorAll('.tab-button')[0].classList.add('active');
+                document.getElementById('attendanceTab').classList.add('active');
+                renderRoster(); // Just re-render, don't reload
+            } else {
+                document.querySelectorAll('.tab-button')[1].classList.add('active');
+                document.getElementById('historyTab').classList.add('active');
+                loadHistory();
+            }
+        }
+        
+        // Load history - simplified
         function loadHistory() {
             const historyList = document.getElementById('historyList');
-            const keys = Object.keys(localStorage).filter(key => key.startsWith('attendance_'));
+            const keys = [];
+            
+            // Get all attendance keys
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('attendance_')) {
+                    keys.push(key);
+                }
+            }
             
             if (keys.length === 0) {
                 historyList.innerHTML = '<p style="text-align: center; color: #7f8c8d;">暫無歷史記錄</p>';
                 return;
             }
             
-            // Sort by date (newest first)
             keys.sort().reverse();
             
             let html = '<h3>📜 過往出席記錄</h3>';
             keys.forEach(key => {
                 const dateStr = key.replace('attendance_', '');
-                const data = JSON.parse(localStorage.getItem(key));
-                const presentCount = Object.values(data).filter(v => v).length;
-                const totalCount = Object.keys(data).length;
-                
-                html += `
-                    <div class="history-item" onclick="viewHistoryDetail('${dateStr}')">
-                        <div class="history-date">📅 ${new Date(dateStr).toLocaleDateString('zh-HK', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-                        <div class="history-stats">
-                            <span>✅ 出席: ${presentCount}/${totalCount}</span>
-                            <span>❌ 缺席: ${totalCount - presentCount}/${totalCount}</span>
+                try {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    const presentCount = Object.values(data).filter(v => v).length;
+                    const totalCount = Object.keys(data).length;
+                    
+                    html += `
+                        <div class="history-item" onclick="viewHistoryDetail('${dateStr}')">
+                            <div class="history-date">📅 ${new Date(dateStr).toLocaleDateString('zh-HK', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                            <div class="history-stats">
+                                <span>✅ 出席: ${presentCount}/${totalCount}</span>
+                                <span>❌ 缺席: ${totalCount - presentCount}/${totalCount}</span>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } catch (e) {
+                    console.log('Error loading history:', e);
+                }
             });
             
             historyList.innerHTML = html;
@@ -930,38 +916,42 @@
         
         // View history detail
         function viewHistoryDetail(dateStr) {
-            const data = JSON.parse(localStorage.getItem('attendance_' + dateStr));
-            const detailDiv = document.getElementById('historyDetail');
-            
-            let html = `
-                <button class="back-button" onclick="loadHistory()">← 返回列表</button>
-                <h3>📅 ${new Date(dateStr).toLocaleDateString('zh-HK', { year: 'numeric', month: 'long', day: 'numeric' })}</h3>
-                <button class="delete-btn" onclick="deleteHistory('${dateStr}')">🗑️ 刪除記錄</button>
-                <ul class="student-list" style="margin-top: 20px;">
-            `;
-            
-            students.forEach((student, index) => {
-                const isPresent = data[index] || false;
-                html += `
-                    <li class="student-item ${isPresent ? 'present' : ''}" style="opacity: ${isPresent ? 1 : 0.7}">
-                        <div class="student-info">
-                            <div class="student-name">${student.name}</div>
-                            <div class="student-email">${student.email}</div>
-                        </div>
-                        <div style="margin-right: 20px; font-weight: bold;">
-                            ${isPresent ? '✅ 出席' : '❌ 缺席'}
-                        </div>
-                    </li>
+            try {
+                const data = JSON.parse(localStorage.getItem('attendance_' + dateStr));
+                const detailDiv = document.getElementById('historyDetail');
+                
+                let html = `
+                    <button class="back-button" onclick="loadHistory()">← 返回列表</button>
+                    <h3>📅 ${new Date(dateStr).toLocaleDateString('zh-HK', { year: 'numeric', month: 'long', day: 'numeric' })}</h3>
+                    <button class="delete-btn" onclick="deleteHistory('${dateStr}')">🗑️ 刪除記錄</button>
+                    <ul class="student-list" style="margin-top: 20px;">
                 `;
-            });
-            
-            html += '</ul>';
-            detailDiv.innerHTML = html;
-            detailDiv.style.display = 'block';
-            document.querySelector('.history-list').style.display = 'none';
+                
+                students.forEach((student, index) => {
+                    const isPresent = data[index] || false;
+                    html += `
+                        <li class="student-item ${isPresent ? 'present' : ''}" style="opacity: ${isPresent ? 1 : 0.7}">
+                            <div class="student-info">
+                                <div class="student-name">${student.name}</div>
+                                <div class="student-email">${student.email}</div>
+                            </div>
+                            <div style="margin-right: 20px; font-weight: bold;">
+                                ${isPresent ? '✅ 出席' : '❌ 缺席'}
+                            </div>
+                        </li>
+                    `;
+                });
+                
+                html += '</ul>';
+                detailDiv.innerHTML = html;
+                detailDiv.style.display = 'block';
+                document.querySelector('.history-list').style.display = 'none';
+            } catch (e) {
+                console.log('Error viewing history:', e);
+            }
         }
         
-        // Delete history record
+        // Delete history
         function deleteHistory(dateStr) {
             if (confirm('確定要刪除這天的記錄嗎？')) {
                 localStorage.removeItem('attendance_' + dateStr);
@@ -969,33 +959,30 @@
             }
         }
         
-        // Export to CSV (ORDER: name, email, phone, group)
+        // Export to CSV
         function exportToCSV() {
-            const keys = Object.keys(localStorage).filter(key => key.startsWith('attendance_'));
-            
-            // Create CSV header with correct order
             let csv = '日期,姓名,電郵,電話,團契,出席狀態\n';
             
-            keys.forEach(key => {
-                const dateStr = key.replace('attendance_', '');
-                const data = JSON.parse(localStorage.getItem(key));
-                
-                students.forEach((student, index) => {
-                    if (data[index] !== undefined) {
-                        const status = data[index] ? '1' : '0';
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('attendance_')) {
+                    const dateStr = key.replace('attendance_', '');
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
                         const dateLocal = new Date(dateStr).toLocaleDateString('zh-HK');
-                        // Escape fields
-                        const name = student.name.includes(',') ? `"${student.name}"` : student.name;
-                        const email = student.email.includes(',') ? `"${student.email}"` : student.email;
-                        const phone = student.phone?.includes(',') ? `"${student.phone}"` : (student.phone || '');
-                        const group = student.group?.includes(',') ? `"${student.group}"` : (student.group || '');
-                        // Correct order: date, name, email, phone, group, status
-                        csv += `"${dateLocal}",${name},${email},${phone},${group},${status}\n`;
+                        
+                        students.forEach((student, index) => {
+                            if (data[index] !== undefined) {
+                                const status = data[index] ? '1' : '0';
+                                csv += `"${dateLocal}","${student.name}","${student.email || ''}","${student.phone || ''}","${student.group || ''}",${status}\n`;
+                            }
+                        });
+                    } catch (e) {
+                        console.log('Error exporting:', e);
                     }
-                });
-            });
+                }
+            }
             
-            // Download CSV file
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
@@ -1003,11 +990,10 @@
             link.click();
         }
         
-        // Initialize the page
-        document.getElementById('currentDate').textContent = formatDate();
-        loadAttendance();
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
         
-        // Close modal if clicking outside
+        // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('addStudentModal');
             if (event.target === modal) {
