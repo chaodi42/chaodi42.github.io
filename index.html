@@ -795,59 +795,33 @@
             document.getElementById('currentDate').textContent = formatDate();
         }
         
-        // Generate attendance text for sharing
-        function generateAttendanceText() {
-            const presentList = [];
-            const absentList = [];
-            
+        // --- NEW: Generate CSV text for today's attendance (header + rows) ---
+        function generateCSVText() {
+            const todayStr = new Date().toLocaleDateString('zh-HK'); // e.g., "2025/3/2"
+            let csv = '日期,學生姓名,電郵,出席狀態\n';   // header
+
             students.forEach((student, index) => {
-                if (attendance[index]) {
-                    let presentEntry = `${student.name}`;
-                // Add email if available
-                if (student.email && student.email.trim() !== '') {
-                    presentEntry += ` (${student.email})`;
-                }
-                // Add phone if available
-                if (student.phone && student.phone.trim() !== '') {
-                    presentEntry += ` - Phone: ${student.phone}`;
-                }
-                // Add group if available
-                if (student.group && student.group.trim() !== '') {
-                    presentEntry += `, Group: ${student.group}`;
-            }
-            presentList.push(presentEntry);
-                } else {
-                    absentList.push(student.name);
-                }
+                const status = attendance[index] ? '1' : '0';  // 1 for attended, 0 for absent
+                // Escape fields if they contain commas (simple wrap in quotes)
+                const name = student.name.includes(',') ? `"${student.name}"` : student.name;
+                const email = student.email.includes(',') ? `"${student.email}"` : student.email;
+                csv += `"${todayStr}",${name},${email},${status}\n`;
             });
-            
-            let text = `📋 自我認識與全人發展\n`;
-            text += `📅 ${formatDate()}\n`;
-            text += `━━━━━━━━━━━━━━━━━━\n\n`;
-            text += `✅ 出席 (${presentList.length}人):\n`;
-            presentList.forEach(name => text += `   • ${name}\n`);
-            
-            text += `\n❌ 缺席 (${absentList.length}人):\n`;
-            absentList.forEach(name => text += `   • ${name}\n`);
-            
-            text += `\n━━━━━━━━━━━━━━━━━━\n`;
-            text += `總出席率: ${Math.round(presentList.length/students.length*100)}% (${presentList.length}/${students.length})`;
-            
-            return text;
+            return csv;
         }
         
-        // Email attendance
+        // Email attendance (now using CSV format)
         function emailAttendance() {
             const subject = `出席記錄 - ${formatDate()}`;
-            const body = generateAttendanceText();
+            const body = generateCSVText();   // <-- use CSV format
             
-            // Create mailto link
+            // Create mailto link (body will be URL encoded)
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         }
         
-        // Copy attendance to clipboard
+        // Copy attendance to clipboard (now using CSV format)
         function copyAttendance() {
-            const text = generateAttendanceText();
+            const text = generateCSVText();   // <-- use CSV format
             
             navigator.clipboard.writeText(text).then(() => {
                 // Show success message
@@ -941,7 +915,7 @@
             }
         }
         
-        // Export to CSV
+        // Export to CSV (updated: use 1/0 for attendance status)
         function exportToCSV() {
             const keys = Object.keys(localStorage).filter(key => key.startsWith('attendance_'));
             
@@ -954,7 +928,13 @@
                 
                 students.forEach((student, index) => {
                     if (data[index] !== undefined) {
-                        csv += `"${new Date(dateStr).toLocaleDateString('zh-HK')}","${student.name}","${student.email}","${data[index] ? '出席' : '缺席'}"\n`;
+                        // Use 1 for present, 0 for absent
+                        const status = data[index] ? '1' : '0';
+                        const dateLocal = new Date(dateStr).toLocaleDateString('zh-HK');
+                        // Simple quoting in case fields contain commas
+                        const name = student.name.includes(',') ? `"${student.name}"` : student.name;
+                        const email = student.email.includes(',') ? `"${student.email}"` : student.email;
+                        csv += `"${dateLocal}",${name},${email},${status}\n`;
                     }
                 });
             });
