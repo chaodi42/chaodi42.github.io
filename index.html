@@ -969,7 +969,7 @@
                         const email = student.email.includes(',') ? `"${student.email}"` : student.email;
                         const group = student.group?.includes(',') ? `"${student.group}"` : (student.group || '');
                         const phone = student.phone?.includes(',') ? `"${student.phone}"` : (student.phone || '');
-                        csv += `"${dateLocal}",${name},${email},${group},${phone},${status}\n`;
+                        csv += `"${dateLocal}",${name},${email},${phone},${group},${status}\n`;
                     }
                 });
             });
