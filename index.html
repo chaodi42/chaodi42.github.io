@@ -568,11 +568,7 @@
         let students = [];          // 完整學生列表 (從JSON加載 + 臨時學生)
         let attendance = {};        // 索引 -> boolean (出席狀態)
         
-        // 外部JSON 檔案路徑 (範例採用靜態JSON內容, 但為了演示從外部students.json讀取)
-        // 由於無法真正部署外部文件, 但程式支援fetch, 並提供內建備用5位學生範例，但遵循題目要求: 從獨立json文件獲取學生資訊
-        // 實際執行時會嘗試 fetch('students.json')，如果失敗則使用默認的5位範例學生 (確保UI運作)
-        // 同時題目要求: 只加5位學生作為示例, 且原本的長名單移除。
-        
+        // Example
         const DEFAULT_FALLBACK_STUDENTS = [
             { name: "陳雅各", email: "james.chen@example.com", phone: "0912-345678", group: "以馬內利團契", temporary: false },
             { name: "李以諾", email: "eno.li@example.com", phone: "0923-456789", group: "葡萄園團契", temporary: false },
@@ -600,7 +596,6 @@
                 }
                 const jsonData = await response.json();
                 if (Array.isArray(jsonData) && jsonData.length > 0) {
-                    // 映射確保每個學生有必要的欄位，且temporary標記為false (基礎名單)
                     students = jsonData.map(s => ({
                         name: s.name || "未命名",
                         email: s.email || "",
@@ -614,11 +609,11 @@
                 }
             } catch (error) {
                 console.warn("⚠️ 無法載入 students.json，使用內建5位範例學生:", error);
-                // 使用內建5位範例學生 (符合題目要求只顯示5個)
+                // use default students info
                 students = DEFAULT_FALLBACK_STUDENTS.map(s => ({ ...s, temporary: false }));
             }
             
-            // 合併 localStorage 中的臨時學生 (保留先前加入的)
+            // combine localStorage 中的臨時學生 (保留先前加入的)
             try {
                 const savedTemp = localStorage.getItem('spiritual_temp_students');
                 if (savedTemp) {
@@ -661,7 +656,7 @@
             document.getElementById('currentDate').innerText = new Date().toLocaleDateString('zh-HK', options);
         }
         
-        // 渲染學生清單
+        // render students list
         function renderRoster() {
             const container = document.getElementById('studentList');
             if (!container) return;
