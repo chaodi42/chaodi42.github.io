@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <title>屬靈恩賜與服事 - 出席記錄系統</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f4f8;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #8e44ad;
+            font-weight: 600;
+        }
+        
+        .tab-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            justify-content: center;
+        }
+        
+        .tab-button {
+            padding: 10px 24px;
+            background-color: #ecf0f1;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-button.active {
+            background-color: #8e44ad;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        
+        .date-header {
+            text-align: center;
+            font-size: 1.2em;
+            color: #4a5568;
+            margin: 20px 0;
+            padding: 12px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            font-weight: 500;
+        }
+        
+        .student-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .student-item {
+            background-color: white;
+            margin: 10px 0;
+            padding: 14px 16px;
+            border-radius: 18px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+            border-left: 5px solid #cbd5e0;
+        }
+        
+        .student-item.present {
+            background-color: #e9f7eb;
+            border-left-color: #2ecc71;
+        }
+        
+        .student-item.temporary {
+            border: 2px dashed #f39c12;
+            background-color: #fff9ef;
+        }
+        
+        .student-info {
+            flex: 1;
+        }
+        
+        .student-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .student-email {
+            font-size: 0.8em;
+            color: #5b6e8c;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        
+        .student-badge {
+            font-size: 0.7em;
+            background-color: #f39c12;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+        
+        .attendance-checkbox {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+        
+        .attendance-checkbox input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #8e44ad;
+        }
+        
+        .delete-student {
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1.3em;
+            margin-left: 12px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            font-weight: bold;
+            padding: 0 6px;
+        }
+        
+        .delete-student:hover {
+            opacity: 1;
+        }
+        
+        .summary {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .summary-stats {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .summary-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .save-btn {
+            background-color: #3498db;
+            color: white;
+            flex: 1;
+        }
+        
+        .save-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+            flex: 1;
+        }
+        
+        .reset-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .mark-all-btn {
+            background-color: #f39c12;
+            color: white;
+            flex: 1;
+        }
+        
+        .mark-all-btn:hover {
+            background-color: #e67e22;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 2px dashed #e9ecef;
+        }
+        
+        .email-btn {
+            background-color: #007aff;
+            color: white;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .copy-btn {
+            background-color: #5856d6;
+            color: white;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .add-student-btn {
+            background-color: #27ae60;
+            color: white;
+            width: 100%;
+            padding: 14px;
+            font-size: 1em;
+            margin-top: 20px;
+            background-color: white;
+            color: #27ae60;
+            border: 2px dashed #27ae60;
+        }
+        
+        .add-student-btn:hover {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 28px;
+            border-radius: 32px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+        }
+        
+        .modal-content h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #4a5568;
+            font-weight: 500;
+            font-size: 0.85em;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            font-size: 1em;
+            transition: 0.2s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #8e44ad;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 8px;
+        }
+        
+        .cancel-btn {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .add-confirm-btn {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        /* History */
+        .history-list {
+            background-color: white;
+            border-radius: 28px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+        
+        .history-item {
+            border-bottom: 1px solid #ecf0f1;
+            padding: 16px 0;
+            cursor: pointer;
+            transition: background 0.1s;
+            border-radius: 16px;
+        }
+        
+        .history-item:hover {
+            background-color: #f8fafc;
+            padding-left: 8px;
+        }
+        
+        .history-date {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 6px;
+        }
+        
+        .history-stats {
+            display: flex;
+            gap: 20px;
+            color: #5b6e8c;
+            font-size: 0.85em;
+        }
+        
+        .detail-view {
+            background-color: white;
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+        
+        .back-button {
+            background-color: #8e44ad;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            margin-bottom: 18px;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 6px 18px;
+            border-radius: 40px;
+            margin-left: 12px;
+        }
+        
+        .export-btn {
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 40px;
+            margin-top: 16px;
+            width: 100%;
+        }
+        
+        .footer {
+            margin-top: 28px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.8em;
+        }
+        
+        .qr-section {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px 10px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .qr-section h3 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+        
+        .qr-box {
+            display: inline-block;
+            background-color: white;
+            padding: 12px;
+            border-radius: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .qr-box img {
+            width: 200px;
+            height: 200px;
+            display: block;
+        }
+        
+        @media (max-width: 550px) {
+            .qr-box img {
+                width: 160px;
+                height: 160px;
+            }
+            .summary-buttons button {
+                font-size: 0.85em;
+            }
+        }
+        
+        .loading-spinner {
+            text-align: center;
+            padding: 30px;
+            color: #8e44ad;
+        }
+        
+        .error-message {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            padding: 15px;
+            border-radius: 24px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>✨ 屬靈恩賜與服事 ✨</h1>
+    
+    <div class="tab-bar">
+        <button class="tab-button active" id="tabAttendanceBtn">📋 出席記錄</button>
+        <button class="tab-button" id="tabHistoryBtn">📊 匯總記錄</button>
+    </div>
+    
+    <!-- Attendance Tab -->
+    <div id="attendanceTab" class="tab-content active">
+        <div class="date-header">
+            📅 <span id="currentDate"></span>
+        </div>
+        
+        <ul class="student-list" id="studentList">
+            <li class="loading-spinner">📖 載入學生資料中...</li>
+        </ul>
+        
+        <button class="add-student-btn" id="openModalBtn">➕ 加入新同學</button>
+        
+        <div class="summary">
+            <div class="summary-stats">
+                <span id="presentCount">0</span>/<span id="totalStudents">0</span> 出席
+            </div>
+            
+            <div class="summary-buttons">
+                <button class="mark-all-btn" id="markAllBtn">全體出席</button>
+                <button class="reset-btn" id="resetAttendanceBtn">重設</button>
+                <button class="save-btn" id="saveAttendanceBtn">保存</button>
+            </div>
+            
+            <div class="share-buttons">
+                <button class="email-btn" id="emailBtn">📧 Email</button>
+                <button class="copy-btn" id="copyBtn">📋 Copy</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- History Tab -->
+    <div id="historyTab" class="tab-content">
+        <div class="history-list" id="historyList"></div>
+        <button class="export-btn" id="exportCsvBtn">📥 下載所有記錄 (CSV)</button>
+        <div id="historyDetail" class="detail-view" style="display: none;"></div>
+    </div>
+    
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <h2>➕ 加入新同學</h2>
+            <div class="form-group">
+                <label>姓名 *</label>
+                <input type="text" id="studentName" placeholder="例如：李小龍">
+            </div>
+            <div class="form-group">
+                <label>電郵</label>
+                <input type="email" id="studentEmail" placeholder="student@example.com">
+            </div>
+            <div class="form-group">
+                <label>電話</label>
+                <input type="text" id="studentPhone" placeholder="9123-4567">
+            </div>
+            <div class="form-group">
+                <label>團契小組</label>
+                <input type="text" id="studentGroup" placeholder="葡萄園團契">
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="markPresent" checked> 立即標記為出席
+                </label>
+            </div>
+            <div class="modal-buttons">
+                <button class="cancel-btn" id="closeModalBtn">取消</button>
+                <button class="add-confirm-btn" id="confirmAddBtn">加入</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        ⚡ 點擊核取方塊記錄出席 • 資料自動儲存於瀏覽器
+    </div>
+    
+    <div class="qr-section">
+        <h3>2026春季 全人成長主日學群</h3>
+        <div class="qr-box">
+            <img src="https://github.com/user-attachments/assets/32d91cf1-90f5-4bd6-8088-69775fddd226"
+                 alt="QR Code" 
+                 style="width: 200px; height: 200px; display: block;">
+        </div>
+        <p style="color: #8e44ad; font-size: 0.85em; margin-top: 10px;">📱 掃描QRCode 加入課程群</p>
+    </div>
+
+    <script>
+        // ---------- 核心資料 ----------
+        let students = [];          // 完整學生列表 (從JSON加載 + 臨時學生)
+        let attendance = {};        // 索引 -> boolean (出席狀態)
+        
+        // 外部JSON 檔案路徑 (範例採用靜態JSON內容, 但為了演示從外部students.json讀取)
+        // 由於無法真正部署外部文件, 但程式支援fetch, 並提供內建備用5位學生範例，但遵循題目要求: 從獨立json文件獲取學生資訊
+        // 實際執行時會嘗試 fetch('students.json')，如果失敗則使用默認的5位範例學生 (確保UI運作)
+        // 同時題目要求: 只加5位學生作為示例, 且原本的長名單移除。
+        
+        const DEFAULT_FALLBACK_STUDENTS = [
+            { name: "陳雅各", email: "james.chen@example.com", phone: "0912-345678", group: "以馬內利團契", temporary: false },
+            { name: "李以諾", email: "eno.li@example.com", phone: "0923-456789", group: "葡萄園團契", temporary: false },
+            { name: "王路得", email: "ruth.wang@example.com", phone: "0934-567890", group: "但以理小組", temporary: false },
+            { name: "張撒拉", email: "sarah.zhang@example.com", phone: "0945-678901", group: "馬大服事組", temporary: false },
+            { name: "林保羅", email: "paul.lin@example.com", phone: "0956-789012", group: "敬拜團", temporary: false }
+        ];
+        
+        // 初始化主流程
+        async function initializeApp() {
+            await loadStudentsFromJSON();
+            initAttendanceForToday();
+            attachEventListeners();
+            updateDateDisplay();
+            renderRoster();
+            updateSummaryStats();
+        }
+        
+        // 從外部 JSON 獲取學生 (students.json)
+        async function loadStudentsFromJSON() {
+            try {
+                const response = await fetch('students.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const jsonData = await response.json();
+                if (Array.isArray(jsonData) && jsonData.length > 0) {
+                    // 映射確保每個學生有必要的欄位，且temporary標記為false (基礎名單)
+                    students = jsonData.map(s => ({
+                        name: s.name || "未命名",
+                        email: s.email || "",
+                        phone: s.phone || "",
+                        group: s.group || "",
+                        temporary: false
+                    }));
+                    console.log("✅ 從 students.json 成功載入學生:", students.length);
+                } else {
+                    throw new Error("JSON格式不正確或為空");
+                }
+            } catch (error) {
+                console.warn("⚠️ 無法載入 students.json，使用內建5位範例學生:", error);
+                // 使用內建5位範例學生 (符合題目要求只顯示5個)
+                students = DEFAULT_FALLBACK_STUDENTS.map(s => ({ ...s, temporary: false }));
+            }
+            
+            // 合併 localStorage 中的臨時學生 (保留先前加入的)
+            try {
+                const savedTemp = localStorage.getItem('spiritual_temp_students');
+                if (savedTemp) {
+                    const tempStudents = JSON.parse(savedTemp);
+                    if (Array.isArray(tempStudents)) {
+                        tempStudents.forEach(ts => {
+                            students.push({ ...ts, temporary: true });
+                        });
+                    }
+                }
+            } catch(e) { console.warn(e); }
+        }
+        
+        // 初始化今日出席狀態 (保留既有今日數據)
+        function initAttendanceForToday() {
+            const todayKey = getTodayKey();
+            const savedAttendance = localStorage.getItem(todayKey);
+            const newAttendance = {};
+            students.forEach((_, idx) => { newAttendance[idx] = false; });
+            
+            if (savedAttendance) {
+                try {
+                    const parsed = JSON.parse(savedAttendance);
+                    for (let idx in parsed) {
+                        if (newAttendance.hasOwnProperty(idx) && parsed[idx] !== undefined) {
+                            newAttendance[idx] = parsed[idx];
+                        }
+                    }
+                } catch(e) {}
+            }
+            attendance = newAttendance;
+        }
+        
+        function getTodayKey() {
+            return 'attendance_' + new Date().toDateString();
+        }
+        
+        function updateDateDisplay() {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            document.getElementById('currentDate').innerText = new Date().toLocaleDateString('zh-HK', options);
+        }
+        
+        // 渲染學生清單
+        function renderRoster() {
+            const container = document.getElementById('studentList');
+            if (!container) return;
+            if (!students.length) {
+                container.innerHTML = '<li style="text-align:center; padding: 30px;">📭 尚無學生，請新增或檢查檔案</li>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            students.forEach((student, idx) => {
+                const li = document.createElement('li');
+                li.className = `student-item ${attendance[idx] ? 'present' : ''} ${student.temporary ? 'temporary' : ''}`;
+                
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'student-info';
+                const nameSpan = document.createElement('div');
+                nameSpan.className = 'student-name';
+                nameSpan.textContent = student.name;
+                if (student.temporary) {
+                    const badge = document.createElement('span');
+                    badge.className = 'student-badge';
+                    badge.textContent = '臨時';
+                    nameSpan.appendChild(badge);
+                }
+                const emailSpan = document.createElement('div');
+                emailSpan.className = 'student-email';
+                emailSpan.textContent = student.email || '';
+                infoDiv.appendChild(nameSpan);
+                infoDiv.appendChild(emailSpan);
+                
+                const checkWrapper = document.createElement('div');
+                checkWrapper.className = 'attendance-checkbox';
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.checked = !!attendance[idx];
+                cb.addEventListener('change', (e) => {
+                    e.stopPropagation();
+                    toggleAttendanceByIdx(idx);
+                });
+                checkWrapper.appendChild(cb);
+                
+                li.appendChild(infoDiv);
+                li.appendChild(checkWrapper);
+                
+                if (student.temporary) {
+                    const delBtn = document.createElement('span');
+                    delBtn.className = 'delete-student';
+                    delBtn.textContent = '✖';
+                    delBtn.title = '刪除此同學';
+                    delBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        deleteTemporaryStudent(idx);
+                    });
+                    li.appendChild(delBtn);
+                }
+                container.appendChild(li);
+            });
+        }
+        
+        function toggleAttendanceByIdx(index) {
+            attendance[index] = !attendance[index];
+            renderRoster();
+            updateSummaryStats();
+            autoSaveToday();
+        }
+        
+        function markAllPresent() {
+            if (confirm("📌 標記所有人今日出席？")) {
+                students.forEach((_, idx) => { attendance[idx] = true; });
+                renderRoster();
+                updateSummaryStats();
+                autoSaveToday();
+            }
+        }
+        
+        function resetAttendance() {
+            if (confirm("⚠️ 重設今日所有出席記錄？")) {
+                students.forEach((_, idx) => { attendance[idx] = false; });
+                renderRoster();
+                updateSummaryStats();
+                autoSaveToday();
+            }
+        }
+        
+        function updateSummaryStats() {
+            const presentCount = Object.values(attendance).filter(v => v === true).length;
+            document.getElementById('presentCount').innerText = presentCount;
+            document.getElementById('totalStudents').innerText = students.length;
+        }
+        
+        function autoSaveToday() {
+            try {
+                const todayKey = getTodayKey();
+                localStorage.setItem(todayKey, JSON.stringify(attendance));
+                // 同時保存臨時學生列表
+                const tempOnly = students.filter(s => s.temporary === true);
+                localStorage.setItem('spiritual_temp_students', JSON.stringify(tempOnly));
+            } catch(e) {}
+        }
+        
+        function saveAttendanceWithFeedback() {
+            autoSaveToday();
+            const btn = document.getElementById('saveAttendanceBtn');
+            const original = btn.textContent;
+            btn.textContent = '✓ 已儲存';
+            btn.style.backgroundColor = '#27ae60';
+            setTimeout(() => {
+                btn.textContent = original;
+                btn.style.backgroundColor = '#3498db';
+            }, 1800);
+        }
+        
+        // 新增臨時學生
+        function addNewStudentFromModal() {
+            const name = document.getElementById('studentName').value.trim();
+            if (!name) {
+                alert("請填寫學生姓名");
+                return;
+            }
+            const email = document.getElementById('studentEmail').value.trim();
+            const phone = document.getElementById('studentPhone').value.trim();
+            const group = document.getElementById('studentGroup').value.trim();
+            const markNow = document.getElementById('markPresent').checked;
+            
+            const newStudent = {
+                name: name,
+                email: email,
+                phone: phone,
+                group: group,
+                temporary: true
+            };
+            students.push(newStudent);
+            const newIdx = students.length - 1;
+            attendance[newIdx] = markNow;
+            renderRoster();
+            updateSummaryStats();
+            autoSaveToday();
+            hideModal();
+            alert(`✨ 已加入 ${name} ✨`);
+            clearModalInputs();
+        }
+        
+        function deleteTemporaryStudent(index) {
+            const student = students[index];
+            if (!student.temporary) {
+                alert("基礎學生無法刪除，僅能刪除臨時加入的同學");
+                return;
+            }
+            if (confirm(`確定刪除「${student.name}」嗎？`)) {
+                students.splice(index, 1);
+                // 重新建構 attendance 對應
+                const newAttendance = {};
+                students.forEach((_, i) => {
+                    newAttendance[i] = attendance[i] || false;
+                });
+                attendance = newAttendance;
+                renderRoster();
+                updateSummaryStats();
+                autoSaveToday();
+            }
+        }
+        
+        // 產生CSV文字 (今日)
+        function generateTodayCSV() {
+            const dateLabel = new Date().toLocaleDateString('zh-HK');
+            let csv = '日期,姓名,電郵,電話,團契,出席狀態\n';
+            students.forEach((stu, idx) => {
+                const status = attendance[idx] ? '1' : '0';
+                csv += `"${dateLabel}","${stu.name}","${stu.email || ''}","${stu.phone || ''}","${stu.group || ''}",${status}\n`;
+            });
+            return csv;
+        }
+        
+        async function copyAttendanceToClipboard() {
+            const csvText = generateTodayCSV();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(csvText);
+                    const copyBtn = document.getElementById('copyBtn');
+                    const orig = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '✓ 已複製';
+                    copyBtn.style.backgroundColor = '#27ae60';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = orig;
+                        copyBtn.style.backgroundColor = '#5856d6';
+                    }, 2000);
+                } catch(e) {
+                    alert("無法複製，請手動選取");
+                }
+            } else {
+                alert("請手動複製資料: \n" + csvText.substring(0, 500));
+            }
+        }
+        
+        function emailAttendance() {
+            const subject = `屬靈恩賜與服事 - 出席記錄 ${new Date().toLocaleDateString()}`;
+            const body = generateTodayCSV();
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+        
+        // 歷史記錄匯出全部
+        function exportAllToCSV() {
+            let masterCSV = '日期,姓名,電郵,電話,團契,出席狀態\n';
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('attendance_')) {
+                    const datePart = key.replace('attendance_', '');
+                    let displayDate = datePart;
+                    try {
+                        displayDate = new Date(datePart).toLocaleDateString('zh-HK');
+                    } catch(e) {}
+                    const storedData = JSON.parse(localStorage.getItem(key) || '{}');
+                    students.forEach((student, idx) => {
+                        if (storedData.hasOwnProperty(idx)) {
+                            const status = storedData[idx] ? '1' : '0';
+                            masterCSV += `"${displayDate}","${student.name}","${student.email || ''}","${student.phone || ''}","${student.group || ''}",${status}\n`;
+                        }
+                    });
+                }
+            }
+            const blob = new Blob(['\uFEFF' + masterCSV], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `屬靈恩賜出席全紀錄_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+        }
+        
+        // 歷史記錄頁面
+        async function loadHistoryTab() {
+            const historyDiv = document.getElementById('historyList');
+            const detailDiv = document.getElementById('historyDetail');
+            detailDiv.style.display = 'none';
+            const keys = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && k.startsWith('attendance_')) keys.push(k);
+            }
+            if (keys.length === 0) {
+                historyDiv.innerHTML = '<p style="text-align:center; padding:20px;">📭 尚無歷史出席記錄</p>';
+                return;
+            }
+            keys.sort().reverse();
+            let html = '<h3 style="margin-top:0;">📆 歷史出席記錄</h3>';
+            for (let key of keys) {
+                const dateRaw = key.replace('attendance_', '');
+                let dateShow = dateRaw;
+                try { dateShow = new Date(dateRaw).toLocaleDateString('zh-HK'); } catch(e) {}
+                const data = JSON.parse(localStorage.getItem(key) || '{}');
+                const total = Object.keys(data).length;
+                const present = Object.values(data).filter(v=>v===true).length;
+                html += `
+                    <div class="history-item" data-datekey="${dateRaw}">
+                        <div class="history-date">📅 ${dateShow}</div>
+                        <div class="history-stats">✅ 出席: ${present}/${total} &nbsp; ❌ 缺席: ${total-present}</div>
+                    </div>
+                `;
+            }
+            historyDiv.innerHTML = html;
+            document.querySelectorAll('.history-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const dateKey = el.getAttribute('data-datekey');
+                    viewHistoryDetail(dateKey);
+                });
+            });
+        }
+        
+        function viewHistoryDetail(dateKey) {
+            const data = JSON.parse(localStorage.getItem('attendance_' + dateKey) || '{}');
+            const detailDiv = document.getElementById('historyDetail');
+            let detailHtml = `<button class="back-button" id="backHistoryBtn">← 返回列表</button>
+                              <h3>📅 ${new Date(dateKey).toLocaleDateString('zh-HK')}</h3>
+                              <button class="delete-btn" id="delHistoryBtn">🗑️ 刪除此日記錄</button>
+                              <ul class="student-list" style="margin-top:16px;">`;
+            students.forEach((stu, idx) => {
+                const isPresent = data[idx] === true;
+                detailHtml += `<li class="student-item ${isPresent ? 'present' : ''}" style="opacity:0.9">
+                                <div class="student-info"><div class="student-name">${stu.name}</div><div class="student-email">${stu.email || ''}</div></div>
+                                <div style="font-weight:bold;">${isPresent ? '✅ 出席' : '❌ 缺席'}</div>
+                               </li>`;
+            });
+            detailHtml += `</ul>`;
+            detailDiv.innerHTML = detailHtml;
+            detailDiv.style.display = 'block';
+            document.getElementById('historyList').style.display = 'none';
+            document.getElementById('backHistoryBtn')?.addEventListener('click', () => {
+                document.getElementById('historyList').style.display = 'block';
+                detailDiv.style.display = 'none';
+            });
+            document.getElementById('delHistoryBtn')?.addEventListener('click', () => {
+                if(confirm('刪除該天出席記錄？')) {
+                    localStorage.removeItem('attendance_' + dateKey);
+                    loadHistoryTab();
+                }
+            });
+        }
+        
+        // Modal 控制
+        function showModal() { document.getElementById('addStudentModal').classList.add('active'); }
+        function hideModal() { document.getElementById('addStudentModal').classList.remove('active'); }
+        function clearModalInputs() {
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentEmail').value = '';
+            document.getElementById('studentPhone').value = '';
+            document.getElementById('studentGroup').value = '';
+            document.getElementById('markPresent').checked = true;
+        }
+        
+        function attachEventListeners() {
+            document.getElementById('markAllBtn').onclick = () => markAllPresent();
+            document.getElementById('resetAttendanceBtn').onclick = () => resetAttendance();
+            document.getElementById('saveAttendanceBtn').onclick = () => saveAttendanceWithFeedback();
+            document.getElementById('copyBtn').onclick = () => copyAttendanceToClipboard();
+            document.getElementById('emailBtn').onclick = () => emailAttendance();
+            document.getElementById('openModalBtn').onclick = () => showModal();
+            document.getElementById('closeModalBtn').onclick = () => hideModal();
+            document.getElementById('confirmAddBtn').onclick = () => addNewStudentFromModal();
+            document.getElementById('exportCsvBtn').onclick = () => exportAllToCSV();
+            
+            document.getElementById('tabAttendanceBtn').onclick = () => switchTab('attendance');
+            document.getElementById('tabHistoryBtn').onclick = () => switchTab('history');
+            window.onclick = (e) => { if(e.target === document.getElementById('addStudentModal')) hideModal(); };
+        }
+        
+        function switchTab(tab) {
+            const attTab = document.getElementById('attendanceTab');
+            const histTab = document.getElementById('historyTab');
+            const btnAtt = document.getElementById('tabAttendanceBtn');
+            const btnHist = document.getElementById('tabHistoryBtn');
+            if(tab === 'attendance') {
+                attTab.classList.add('active');
+                histTab.classList.remove('active');
+                btnAtt.classList.add('active');
+                btnHist.classList.remove('active');
+                renderRoster();
+                updateSummaryStats();
+            } else {
+                attTab.classList.remove('active');
+                histTab.classList.add('active');
+                btnAtt.classList.remove('active');
+                btnHist.classList.add('active');
+                loadHistoryTab();
+            }
+        }
+        
+        initializeApp();
+    </script>
+</body>
+</html>
