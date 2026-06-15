@@ -1,32 +1,104 @@
 [
   {
-    "name": "陳雅各",
-    "email": "james.chen@example.com",
-    "phone": "0912-345678",
-    "group": "以馬內利團契"
+    "name": "劉愛漣",
+    "email": "ailienhsu@gmail.com",
+    "phone": "",
+    "group": ""
   },
   {
-    "name": "李以諾",
-    "email": "eno.li@example.com",
-    "phone": "0923-456789",
+    "name": "王麗",
+    "email": "charlotteumass@gmail.com",
+    "phone": "",
+    "group": "社青團契"
+  },
+  {
+    "name": "马学为",
+    "email": "xuewei3d@gmail.com",
+    "phone": "",
+    "group": "青橄欖團契"
+  },
+  {
+    "name": "付雪艳",
+    "email": "Xueyanfu@hotmail.com",
+    "phone": "",
+    "group": "庇哩亞團契"
+  },
+  {
+    "name": "邸超",
+    "email": "dichao.bnu@gmail.com",
+    "phone": "",
     "group": "葡萄園團契"
   },
   {
-    "name": "王路得",
-    "email": "ruth.wang@example.com",
-    "phone": "0934-567890",
-    "group": "但以理小組"
+    "name": "施慧",
+    "email": "huishi007@yahoo.com",
+    "phone": "",
+    "group": "青橄欖團契"
   },
   {
-    "name": "張撒拉",
-    "email": "sarah.zhang@example.com",
-    "phone": "0945-678901",
-    "group": "馬大服事組"
+    "name": "李強",
+    "email": "qiangLi3708@gmail.com",
+    "phone": "",
+    "group": "庇哩亞團契"
   },
   {
-    "name": "林保羅",
-    "email": "paul.lin@example.com",
-    "phone": "0956-789012",
-    "group": "敬拜團"
+    "name": "張懿卿",
+    "email": "inazhang.tang@gmail.com",
+    "phone": "",
+    "group": "庇哩亞團契"
+  },
+  {
+    "name": "李雪貞",
+    "email": "leeisa88@gmail.com",
+    "phone": "",
+    "group": "靈果團契"
+  },
+  {
+    "name": "林泰安",
+    "email": "taianlin@yahoo.com",
+    "phone": "",
+    "group": "和散那團契"
+  },
+  {
+    "name": "楊婉玲",
+    "email": "wanlinyang@yahoo.com",
+    "phone": "",
+    "group": "和散那團契"
+  },
+  {
+    "name": "侯黎",
+    "email": "houlili2015@gmail.com",
+    "phone": "",
+    "group": "庇哩亞團契"
+  },
+  {
+    "name": "卞超",
+    "email": "abeonsh@gmail.com",
+    "phone": "",
+    "group": "青橄欖團契"
+  },
+  {
+    "name": "黃文琦",
+    "email": "peggywch138@gmail.com",
+    "phone": "",
+    "group": "和散那團契"
+  },
+  {
+    "name": "修倩",
+    "email": "xinqian919@gmail.com",
+    "phone": "",
+    "group": "雅歌團契"
+  },
+  {
+    "name": "李宁",
+    "email": "1211407024@qq.com",
+    "phone": "",
+    "group": "葡萄園團契"
+  },
+  {
+    "name": "孫藝萌",
+    "email": "ys942@cornell.edu",
+    "phone": "",
+    "group": "社青團契"
   }
 ]
