@@ -1,0 +1,32 @@
+[
+  {
+    "name": "陳雅各",
+    "email": "james.chen@example.com",
+    "phone": "0912-345678",
+    "group": "以馬內利團契"
+  },
+  {
+    "name": "李以諾",
+    "email": "eno.li@example.com",
+    "phone": "0923-456789",
+    "group": "葡萄園團契"
+  },
+  {
+    "name": "王路得",
+    "email": "ruth.wang@example.com",
+    "phone": "0934-567890",
+    "group": "但以理小組"
+  },
+  {
+    "name": "張撒拉",
+    "email": "sarah.zhang@example.com",
+    "phone": "0945-678901",
+    "group": "馬大服事組"
+  },
+  {
+    "name": "林保羅",
+    "email": "paul.lin@example.com",
+    "phone": "0956-789012",
+    "group": "敬拜團"
+  }
+]
