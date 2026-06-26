@@ -699,111 +699,108 @@
         }
         
         // ---------- SAVE TO GOOGLE SHEETS ----------
-        async function saveToGoogleSheets() {
-            if (isSaving) {
-                console.log('⏳ Save already in progress...');
-                return;
-            }
+function saveToGoogleSheets() {
+    if (isSaving) {
+        console.log('⏳ Save already in progress...');
+        return;
+    }
+    
+    isSaving = true;
+    const saveBtn = document.getElementById('saveAttendanceBtn');
+    const originalText = saveBtn.textContent;
+    saveBtn.textContent = '⏳ 儲存中...';
+    saveBtn.disabled = true;
+    setSyncStatus('syncing', '🔄 儲存中...');
+    
+    try {
+        const today = new Date();
+        const payload = {
+            date: today.toISOString(),
+            students: students,
+            attendance: attendance
+        };
+        
+        console.log('📤 Saving to Google Sheets:', payload);
+        
+        // Create a hidden form
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = API_URL;
+        form.target = 'hidden_iframe'; // Important for no page reload
+        form.style.display = 'none';
+        
+        // Add data as a hidden field
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'data';
+        input.value = JSON.stringify(payload);
+        form.appendChild(input);
+        
+        // Create hidden iframe for response
+        const iframe = document.createElement('iframe');
+        iframe.name = 'hidden_iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        
+        // Handle iframe load (response received)
+        iframe.onload = function() {
+            console.log('✅ Save completed!');
+            setSyncStatus('synced', '✅ 已儲存');
+            saveBtn.textContent = '✅ 儲存成功!';
+            saveBtn.style.backgroundColor = '#27ae60';
+            autoSaveLocal();
             
-            isSaving = true;
-            const saveBtn = document.getElementById('saveAttendanceBtn');
-            const originalText = saveBtn.textContent;
-            saveBtn.textContent = '⏳ 儲存中...';
-            saveBtn.disabled = true;
-            setSyncStatus('syncing', '🔄 儲存中...');
-            
-            try {
-                const today = new Date();
-                const payload = {
-                    date: today.toISOString(),
-                    students: students,
-                    attendance: attendance
-                };
-                
-                console.log('📤 Saving to Google Sheets:', payload);
-                
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // Add this line
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const result = await response.json();
-                console.log('📥 Save response:', result);
-                
-                if (!result.success) {
-                    throw new Error(result.message || 'Save failed');
-                }
-                
-                console.log('✅ Save successful:', result);
-                setSyncStatus('synced', `✅ 已儲存 (${result.saved || 0}筆記錄)`);
-                
-                // Show success feedback
-                saveBtn.textContent = '✅ 儲存成功!';
-                saveBtn.style.backgroundColor = '#27ae60';
-                
-                // Also save to localStorage as backup
-                autoSaveLocal();
-                
-                setTimeout(() => {
-                    saveBtn.textContent = '💾 保存到雲端';
-                    saveBtn.style.backgroundColor = '#3498db';
-                    saveBtn.disabled = false;
-                }, 2000);
-                
-            } catch (error) {
-                console.error('❌ Save failed:', error);
-                setSyncStatus('error', '❌ 儲存失敗');
-                saveBtn.textContent = '⚠️ 儲存失敗，請重試';
-                saveBtn.style.backgroundColor = '#e74c3c';
-                
-                setTimeout(() => {
-                    saveBtn.textContent = '💾 保存到雲端';
-                    saveBtn.style.backgroundColor = '#3498db';
-                    saveBtn.disabled = false;
-                }, 3000);
-                
-                // Show error to user
-                alert(`儲存失敗: ${error.message}\n\n請檢查網絡連線並重試。`);
-            }
+            setTimeout(() => {
+                saveBtn.textContent = '💾 保存到雲端';
+                saveBtn.style.backgroundColor = '#3498db';
+                saveBtn.disabled = false;
+                // Clean up
+                document.body.removeChild(iframe);
+            }, 2000);
             
             isSaving = false;
-        }
+        };
         
-        // ---------- LOCAL BACKUP ----------
-        function autoSaveLocal() {
-            try {
-                const todayKey = getTodayKey();
-                localStorage.setItem(todayKey, JSON.stringify(attendance));
-                localStorage.setItem('spiritual_students_backup', JSON.stringify(students));
-                localStorage.setItem('spiritual_attendance_backup', JSON.stringify(attendance));
-            } catch(e) {
-                console.warn('Local backup failed:', e);
-            }
-        }
+        // Handle iframe error
+        iframe.onerror = function() {
+            console.error('❌ Save failed');
+            setSyncStatus('error', '❌ 儲存失敗');
+            saveBtn.textContent = '⚠️ 儲存失敗，請重試';
+            saveBtn.style.backgroundColor = '#e74c3c';
+            
+            setTimeout(() => {
+                saveBtn.textContent = '💾 保存到雲端';
+                saveBtn.style.backgroundColor = '#3498db';
+                saveBtn.disabled = false;
+                document.body.removeChild(iframe);
+            }, 3000);
+            
+            isSaving = false;
+        };
         
-        // ---------- UI HELPERS ----------
-        function setSyncStatus(status, text) {
-            const el = document.getElementById('syncStatus');
-            el.className = `sync-status ${status}`;
-            el.textContent = text;
-        }
+        // Submit the form
+        document.body.appendChild(form);
+        form.submit();
         
-        function getTodayKey() {
-            return 'attendance_' + new Date().toDateString();
-        }
+        // Clean up form after submission
+        setTimeout(() => {
+            document.body.removeChild(form);
+        }, 100);
         
-        function updateDateDisplay() {
-            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-            document.getElementById('currentDate').innerText = new Date().toLocaleDateString('zh-HK', options);
-        }
+    } catch (error) {
+        console.error('❌ Save failed:', error);
+        setSyncStatus('error', '❌ 儲存失敗');
+        saveBtn.textContent = '⚠️ 儲存失敗，請重試';
+        saveBtn.style.backgroundColor = '#e74c3c';
+        
+        setTimeout(() => {
+            saveBtn.textContent = '💾 保存到雲端';
+            saveBtn.style.backgroundColor = '#3498db';
+            saveBtn.disabled = false;
+        }, 3000);
+        isSaving = false;
+    }
+}
         
         // ---------- RENDER ROSTER ----------
         function renderRoster() {
