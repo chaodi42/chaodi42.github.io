@@ -581,7 +581,7 @@
     <div class="qr-section">
         <h3>2026夏季 屬靈恩賜與服事</h3>
         <div class="qr-box">
-            <img src="https://github.com/user-attachments/assets/430b1ea1-65ad-4dd8-8cc0-53d64d874734"
+            <img src="https://github.com/user-attachments/assets/74548b89-c682-4975-82e5-af3c1d65ea44"
                  alt="QR Code" 
                  style="width: 200px; height: 200px; display: block;">
         </div>
@@ -590,9 +590,9 @@
 
     <script>
         // ---------- CONFIGURATION ----------
-        // 🔑 REPLACE THIS WITH YOUR DEPLOYED APPS SCRIPT URL
-        // const API_URL = 'https://script.google.com/macros/s/AKfycbyXuILbZm2qmOjbilCOt3fKRJdS9lXZt5NFPYOx0cZFaHpFN3pyTAPoc-TA511_0fqtzA/exec';
+        // 🔑 YOUR DEPLOYED APPS SCRIPT URL
         const API_URL = 'https://script.google.com/macros/s/AKfycbzhMTDBtOrmcg3j2yWnBh5OMdjw55wy5z5XkOG-mpBsuW_yizKivHmVxh8PVcT47E9hwQ/exec';
+        
         // ---------- CORE DATA ----------
         let students = [];
         let attendance = {};
@@ -612,52 +612,89 @@
         async function loadDataFromGoogleSheets() {
             const statusEl = document.getElementById('syncStatus');
             setSyncStatus('syncing', '🔄 同步中...');
+            const container = document.getElementById('studentList');
+            container.innerHTML = '<li class="loading-spinner">📖 載入學生資料中...</li>';
             
             try {
-                const response = await fetch(API_URL);
+                console.log('📡 Fetching data from:', API_URL);
+                const response = await fetch(API_URL, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                console.log('📡 Response status:', response.status);
+                
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 
                 const result = await response.json();
+                console.log('📡 Response data:', result);
                 
+                // Check if the API returned success
                 if (!result.success) {
-                    throw new Error(result.error || 'Failed to load data');
+                    container.innerHTML = `
+                        <li class="error-message">
+                            ⚠️ ${result.message || '無法載入資料'}<br>
+                            <small>請檢查 Google Sheets 的 "StudentsInfo" 分頁</small>
+                        </li>
+                    `;
+                    setSyncStatus('error', '❌ 載入失敗');
+                    students = [];
+                    attendance = {};
+                    updateSummaryStats();
+                    return;
                 }
                 
-                students = result.students || [];
+                // Check if we got students
+                if (!result.students || result.students.length === 0) {
+                    console.warn('⚠️ No students found in sheet');
+                    container.innerHTML = `
+                        <li style="text-align:center; padding: 30px; color: #666;">
+                            📭 尚未有學生資料<br>
+                            <small>請在 Google Sheets 的 "StudentsInfo" 分頁中加入學生資料</small>
+                        </li>
+                    `;
+                    students = [];
+                    attendance = {};
+                    setSyncStatus('synced', '✅ 已同步 (0位同學)');
+                    updateSummaryStats();
+                    return;
+                }
+                
+                // Success! Load the data
+                students = result.students;
                 attendance = {};
                 
                 // Build attendance map from today's data
-                const todayStr = new Date().toLocaleDateString('en-US');
-                if (result.today === todayStr) {
-                    const attMap = result.attendance || {};
-                    students.forEach((_, idx) => {
-                        attendance[idx] = attMap[idx] === true;
-                    });
-                } else {
-                    // No attendance for today yet
-                    students.forEach((_, idx) => {
-                        attendance[idx] = false;
-                    });
-                }
+                const attMap = result.attendance || {};
+                students.forEach((_, idx) => {
+                    attendance[idx] = attMap[idx] === true;
+                });
                 
                 isDataLoaded = true;
-                setSyncStatus('synced', '✅ 已同步');
+                setSyncStatus('synced', `✅ 已同步 (${students.length}位同學)`);
                 console.log(`✅ Loaded ${students.length} students from Google Sheets`);
+                console.log('📊 Students:', students);
+                console.log('📊 Attendance:', attendance);
+                
+                renderRoster();
+                updateSummaryStats();
                 
             } catch (error) {
                 console.error('❌ Failed to load data:', error);
                 setSyncStatus('error', '❌ 載入失敗');
-                // Show error on student list
-                const container = document.getElementById('studentList');
                 container.innerHTML = `
                     <li class="error-message">
                         ⚠️ 無法載入資料: ${error.message}<br>
-                        <small>請檢查網絡連線及API設定</small>
+                        <small>請在瀏覽器 Console 查看詳細錯誤 (按 F12)</small>
                     </li>
                 `;
-                throw error;
+                students = [];
+                attendance = {};
+                updateSummaryStats();
             }
         }
         
@@ -683,6 +720,8 @@
                     attendance: attendance
                 };
                 
+                console.log('📤 Saving to Google Sheets:', payload);
+                
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
@@ -696,13 +735,14 @@
                 }
                 
                 const result = await response.json();
+                console.log('📥 Save response:', result);
                 
                 if (!result.success) {
-                    throw new Error(result.error || 'Save failed');
+                    throw new Error(result.message || 'Save failed');
                 }
                 
                 console.log('✅ Save successful:', result);
-                setSyncStatus('synced', '✅ 已儲存');
+                setSyncStatus('synced', `✅ 已儲存 (${result.saved || 0}筆記錄)`);
                 
                 // Show success feedback
                 saveBtn.textContent = '✅ 儲存成功!';
@@ -880,7 +920,7 @@
                 email: email,
                 phone: phone,
                 group: group,
-                temporary: false // Will be added to Google Sheets as permanent
+                temporary: true
             };
             students.push(newStudent);
             const newIdx = students.length - 1;
@@ -899,4 +939,204 @@
                 alert("基礎學生無法刪除，僅能刪除臨時加入的同學");
                 return;
             }
-            if (
+            if (confirm(`確定刪除「${student.name}」嗎？`)) {
+                students.splice(index, 1);
+                // Rebuild attendance
+                const newAttendance = {};
+                students.forEach((_, i) => {
+                    newAttendance[i] = attendance[i] || false;
+                });
+                attendance = newAttendance;
+                renderRoster();
+                updateSummaryStats();
+                autoSaveLocal();
+            }
+        }
+        
+        // ---------- UTILITY FUNCTIONS ----------
+        function generateTodayCSV() {
+            const dateLabel = new Date().toLocaleDateString('zh-HK');
+            let csv = '日期,姓名,電郵,電話,團契,出席狀態\n';
+            students.forEach((stu, idx) => {
+                const status = attendance[idx] ? '1' : '0';
+                csv += `"${dateLabel}","${stu.name}","${stu.email || ''}","${stu.phone || ''}","${stu.group || ''}",${status}\n`;
+            });
+            return csv;
+        }
+        
+        async function copyAttendanceToClipboard() {
+            const csvText = generateTodayCSV();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(csvText);
+                    const copyBtn = document.getElementById('copyBtn');
+                    const orig = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '✓ 已複製';
+                    copyBtn.style.backgroundColor = '#27ae60';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = orig;
+                        copyBtn.style.backgroundColor = '#5856d6';
+                    }, 2000);
+                } catch(e) {
+                    alert("無法複製，請手動選取");
+                }
+            } else {
+                alert("請手動複製資料: \n" + csvText.substring(0, 500));
+            }
+        }
+        
+        function emailAttendance() {
+            const subject = `屬靈恩賜與服事 - 出席記錄 ${new Date().toLocaleDateString()}`;
+            const body = generateTodayCSV();
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+        
+        function exportAllToCSV() {
+            let masterCSV = '日期,姓名,電郵,電話,團契,出席狀態\n';
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('attendance_')) {
+                    const datePart = key.replace('attendance_', '');
+                    let displayDate = datePart;
+                    try {
+                        displayDate = new Date(datePart).toLocaleDateString('zh-HK');
+                    } catch(e) {}
+                    const storedData = JSON.parse(localStorage.getItem(key) || '{}');
+                    students.forEach((student, idx) => {
+                        if (storedData.hasOwnProperty(idx)) {
+                            const status = storedData[idx] ? '1' : '0';
+                            masterCSV += `"${displayDate}","${student.name}","${student.email || ''}","${student.phone || ''}","${student.group || ''}",${status}\n`;
+                        }
+                    });
+                }
+            }
+            const blob = new Blob(['\uFEFF' + masterCSV], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `屬靈恩賜出席全紀錄_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+        }
+        
+        // ---------- HISTORY FUNCTIONS ----------
+        async function loadHistoryTab() {
+            const historyDiv = document.getElementById('historyList');
+            const detailDiv = document.getElementById('historyDetail');
+            detailDiv.style.display = 'none';
+            const keys = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && k.startsWith('attendance_')) keys.push(k);
+            }
+            if (keys.length === 0) {
+                historyDiv.innerHTML = '<p style="text-align:center; padding:20px;">📭 尚無歷史出席記錄</p>';
+                return;
+            }
+            keys.sort().reverse();
+            let html = '<h3 style="margin-top:0;">📆 歷史出席記錄</h3>';
+            for (let key of keys) {
+                const dateRaw = key.replace('attendance_', '');
+                let dateShow = dateRaw;
+                try { dateShow = new Date(dateRaw).toLocaleDateString('zh-HK'); } catch(e) {}
+                const data = JSON.parse(localStorage.getItem(key) || '{}');
+                const total = Object.keys(data).length;
+                const present = Object.values(data).filter(v=>v===true).length;
+                html += `
+                    <div class="history-item" data-datekey="${dateRaw}">
+                        <div class="history-date">📅 ${dateShow}</div>
+                        <div class="history-stats">✅ 出席: ${present}/${total} &nbsp; ❌ 缺席: ${total-present}</div>
+                    </div>
+                `;
+            }
+            historyDiv.innerHTML = html;
+            document.querySelectorAll('.history-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const dateKey = el.getAttribute('data-datekey');
+                    viewHistoryDetail(dateKey);
+                });
+            });
+        }
+        
+        function viewHistoryDetail(dateKey) {
+            const data = JSON.parse(localStorage.getItem('attendance_' + dateKey) || '{}');
+            const detailDiv = document.getElementById('historyDetail');
+            let detailHtml = `<button class="back-button" id="backHistoryBtn">← 返回列表</button>
+                              <h3>📅 ${new Date(dateKey).toLocaleDateString('zh-HK')}</h3>
+                              <button class="delete-btn" id="delHistoryBtn">🗑️ 刪除此日記錄</button>
+                              <ul class="student-list" style="margin-top:16px;">`;
+            students.forEach((stu, idx) => {
+                const isPresent = data[idx] === true;
+                detailHtml += `<li class="student-item ${isPresent ? 'present' : ''}" style="opacity:0.9">
+                                <div class="student-info"><div class="student-name">${stu.name}</div><div class="student-email">${stu.email || ''}</div></div>
+                                <div style="font-weight:bold;">${isPresent ? '✅ 出席' : '❌ 缺席'}</div>
+                               </li>`;
+            });
+            detailHtml += `</ul>`;
+            detailDiv.innerHTML = detailHtml;
+            detailDiv.style.display = 'block';
+            document.getElementById('historyList').style.display = 'none';
+            document.getElementById('backHistoryBtn')?.addEventListener('click', () => {
+                document.getElementById('historyList').style.display = 'block';
+                detailDiv.style.display = 'none';
+            });
+            document.getElementById('delHistoryBtn')?.addEventListener('click', () => {
+                if(confirm('刪除該天出席記錄？')) {
+                    localStorage.removeItem('attendance_' + dateKey);
+                    loadHistoryTab();
+                }
+            });
+        }
+        
+        // ---------- MODAL FUNCTIONS ----------
+        function showModal() { document.getElementById('addStudentModal').classList.add('active'); }
+        function hideModal() { document.getElementById('addStudentModal').classList.remove('active'); }
+        function clearModalInputs() {
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentEmail').value = '';
+            document.getElementById('studentPhone').value = '';
+            document.getElementById('studentGroup').value = '';
+            document.getElementById('markPresent').checked = true;
+        }
+        
+        // ---------- EVENT LISTENERS ----------
+        function attachEventListeners() {
+            document.getElementById('markAllBtn').onclick = () => markAllPresent();
+            document.getElementById('resetAttendanceBtn').onclick = () => resetAttendance();
+            document.getElementById('saveAttendanceBtn').onclick = () => saveToGoogleSheets();
+            document.getElementById('copyBtn').onclick = () => copyAttendanceToClipboard();
+            document.getElementById('emailBtn').onclick = () => emailAttendance();
+            document.getElementById('openModalBtn').onclick = () => showModal();
+            document.getElementById('closeModalBtn').onclick = () => hideModal();
+            document.getElementById('confirmAddBtn').onclick = () => addNewStudentFromModal();
+            document.getElementById('exportCsvBtn').onclick = () => exportAllToCSV();
+            
+            document.getElementById('tabAttendanceBtn').onclick = () => switchTab('attendance');
+            document.getElementById('tabHistoryBtn').onclick = () => switchTab('history');
+            window.onclick = (e) => { if(e.target === document.getElementById('addStudentModal')) hideModal(); };
+        }
+        
+        function switchTab(tab) {
+            const attTab = document.getElementById('attendanceTab');
+            const histTab = document.getElementById('historyTab');
+            const btnAtt = document.getElementById('tabAttendanceBtn');
+            const btnHist = document.getElementById('tabHistoryBtn');
+            if(tab === 'attendance') {
+                attTab.classList.add('active');
+                histTab.classList.remove('active');
+                btnAtt.classList.add('active');
+                btnHist.classList.remove('active');
+                renderRoster();
+                updateSummaryStats();
+            } else {
+                attTab.classList.remove('active');
+                histTab.classList.add('active');
+                btnAtt.classList.remove('active');
+                btnHist.classList.add('active');
+                loadHistoryTab();
+            }
+        }
+        
+        // ---------- START APP ----------
+        initializeApp();
+    </script>
+</body>
+</html>
