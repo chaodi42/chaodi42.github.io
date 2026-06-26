@@ -581,7 +581,7 @@
     <div class="qr-section">
         <h3>2026夏季 屬靈恩賜與服事</h3>
         <div class="qr-box">
-            <img src="https://github.com/user-attachments/assets/74548b89-c682-4975-82e5-af3c1d65ea44"
+            <img src="https://github.com/user-attachments/assets/430b1ea1-65ad-4dd8-8cc0-53d64d874734"
                  alt="QR Code" 
                  style="width: 200px; height: 200px; display: block;">
         </div>
@@ -659,7 +659,7 @@
                     `;
                     students = [];
                     attendance = {};
-                    setSyncStatus('synced', '✅ 已同步 (0位同學)');
+                    setSyncStatus('synced', '✅ 已同步 (0位老師和同學)');
                     updateSummaryStats();
                     return;
                 }
@@ -675,7 +675,7 @@
                 });
                 
                 isDataLoaded = true;
-                setSyncStatus('synced', `✅ 已同步 (${students.length}位同學)`);
+                setSyncStatus('synced', `✅ 已同步 (${students.length}位老師和同學)`);
                 console.log(`✅ Loaded ${students.length} students from Google Sheets`);
                 console.log('📊 Students:', students);
                 console.log('📊 Attendance:', attendance);
