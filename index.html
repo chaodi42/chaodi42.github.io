@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <style>
-        /* ... keep all your existing styles ... */
+        /* Keep all your existing styles - they remain the same */
         * {
             box-sizing: border-box;
         }
@@ -526,10 +526,22 @@
         // ---------- CORE DATA ----------
         let students = [];
         let attendance = {};
-        let isDataLoaded = false;
         let isSaving = false;
         
-        // ---------- DATE FUNCTION ----------
+        // ---------- INITIALIZATION ----------
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+        
+        async function initializeApp() {
+            updateDateDisplay();
+            await loadDataFromGoogleSheets();
+            attachEventListeners();
+            renderRoster();
+            updateSummaryStats();
+        }
+        
+        // ---------- DATE FUNCTIONS ----------
         function updateDateDisplay() {
             const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
             const el = document.getElementById('currentDate');
@@ -546,7 +558,7 @@
         function setSyncStatus(status, text) {
             const el = document.getElementById('syncStatus');
             if (el) {
-                el.className = `sync-status ${status}`;
+                el.className = 'sync-status ' + status;
                 el.textContent = text;
             }
         }
@@ -561,15 +573,6 @@
             } catch(e) {
                 console.warn('Local backup failed:', e);
             }
-        }
-        
-        // ---------- INITIALIZATION ----------
-        async function initializeApp() {
-            updateDateDisplay();
-            await loadDataFromGoogleSheets();
-            attachEventListeners();
-            renderRoster();
-            updateSummaryStats();
         }
         
         // ---------- LOAD DATA FROM GOOGLE SHEETS ----------
@@ -590,19 +593,14 @@
                 console.log('📡 Response status:', response.status);
                 
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    throw new Error('HTTP ' + response.status + ': ' + response.statusText);
                 }
                 
                 const result = await response.json();
                 console.log('📡 Response data:', result);
                 
                 if (!result.success) {
-                    container.innerHTML = `
-                        <li class="error-message">
-                            ⚠️ ${result.message || '無法載入資料'}<br>
-                            <small>請檢查 Google Sheets 的 "StudentsInfo" 分頁</small>
-                        </li>
-                    `;
+                    container.innerHTML = '<li class="error-message">⚠️ ' + (result.message || '無法載入資料') + '<br><small>請檢查 Google Sheets 的 "StudentsInfo" 分頁</small></li>';
                     setSyncStatus('error', '❌ 載入失敗');
                     students = [];
                     attendance = {};
@@ -612,12 +610,7 @@
                 
                 if (!result.students || result.students.length === 0) {
                     console.warn('⚠️ No students found in sheet');
-                    container.innerHTML = `
-                        <li style="text-align:center; padding: 30px; color: #666;">
-                            📭 尚未有學生資料<br>
-                            <small>請在 Google Sheets 的 "StudentsInfo" 分頁中加入學生資料</small>
-                        </li>
-                    `;
+                    container.innerHTML = '<li style="text-align:center; padding: 30px; color: #666;">📭 尚未有學生資料<br><small>請在 Google Sheets 的 "StudentsInfo" 分頁中加入學生資料</small></li>';
                     students = [];
                     attendance = {};
                     setSyncStatus('synced', '✅ 已同步 (0位同學)');
@@ -629,13 +622,12 @@
                 attendance = {};
                 
                 const attMap = result.attendance || {};
-                students.forEach((_, idx) => {
+                students.forEach(function(_, idx) {
                     attendance[idx] = attMap[idx] === true;
                 });
                 
-                isDataLoaded = true;
-                setSyncStatus('synced', `✅ 已同步 (${students.length}位同學)`);
-                console.log(`✅ Loaded ${students.length} students from Google Sheets`);
+                setSyncStatus('synced', '✅ 已同步 (' + students.length + '位同學)');
+                console.log('✅ Loaded ' + students.length + ' students from Google Sheets');
                 
                 renderRoster();
                 updateSummaryStats();
@@ -643,20 +635,15 @@
             } catch (error) {
                 console.error('❌ Failed to load data:', error);
                 setSyncStatus('error', '❌ 載入失敗');
-                container.innerHTML = `
-                    <li class="error-message">
-                        ⚠️ 無法載入資料: ${error.message}<br>
-                        <small>請在瀏覽器 Console 查看詳細錯誤 (按 F12)</small>
-                    </li>
-                `;
+                container.innerHTML = '<li class="error-message">⚠️ 無法載入資料: ' + error.message + '<br><small>請在瀏覽器 Console 查看詳細錯誤 (按 F12)</small></li>';
                 students = [];
                 attendance = {};
                 updateSummaryStats();
             }
         }
         
-        // ---------- SAVE TO GOOGLE SHEETS (fetch with no-cors - FIXED) ----------
-        async function saveToGoogleSheets() {
+        // ---------- SAVE TO GOOGLE SHEETS ----------
+        function saveToGoogleSheets() {
             if (isSaving) {
                 console.log('⏳ Save already in progress...');
                 return;
@@ -668,15 +655,15 @@
             }
             
             isSaving = true;
-            const saveBtn = document.getElementById('saveAttendanceBtn');
-            const originalText = saveBtn.textContent;
+            var saveBtn = document.getElementById('saveAttendanceBtn');
+            var originalText = saveBtn.textContent;
             saveBtn.textContent = '⏳ 儲存中...';
             saveBtn.disabled = true;
             setSyncStatus('syncing', '🔄 儲存中...');
             
             try {
-                const today = new Date();
-                const payload = {
+                var today = new Date();
+                var payload = {
                     date: today.toISOString(),
                     students: students,
                     attendance: attendance
@@ -685,27 +672,41 @@
                 console.log('📤 Saving to Google Sheets:', payload);
                 
                 // Use fetch with no-cors mode
-                const response = await fetch(API_URL, {
+                fetch(API_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(payload)
+                }).then(function() {
+                    console.log('✅ Save request sent successfully');
+                    setSyncStatus('synced', '✅ 已儲存');
+                    saveBtn.textContent = '✅ 儲存成功!';
+                    saveBtn.style.backgroundColor = '#27ae60';
+                    autoSaveLocal();
+                    
+                    setTimeout(function() {
+                        saveBtn.textContent = '💾 保存到雲端';
+                        saveBtn.style.backgroundColor = '#3498db';
+                        saveBtn.disabled = false;
+                    }, 2000);
+                    
+                    isSaving = false;
+                }).catch(function(error) {
+                    console.error('❌ Save failed:', error);
+                    setSyncStatus('error', '❌ 儲存失敗');
+                    saveBtn.textContent = '⚠️ 儲存失敗，請重試';
+                    saveBtn.style.backgroundColor = '#e74c3c';
+                    
+                    setTimeout(function() {
+                        saveBtn.textContent = '💾 保存到雲端';
+                        saveBtn.style.backgroundColor = '#3498db';
+                        saveBtn.disabled = false;
+                    }, 3000);
+                    
+                    isSaving = false;
                 });
-                
-                // With no-cors, we can't read the response, but the request was sent
-                console.log('✅ Save request sent successfully');
-                setSyncStatus('synced', '✅ 已儲存');
-                saveBtn.textContent = '✅ 儲存成功!';
-                saveBtn.style.backgroundColor = '#27ae60';
-                autoSaveLocal();
-                
-                setTimeout(() => {
-                    saveBtn.textContent = '💾 保存到雲端';
-                    saveBtn.style.backgroundColor = '#3498db';
-                    saveBtn.disabled = false;
-                }, 2000);
                 
             } catch (error) {
                 console.error('❌ Save failed:', error);
@@ -713,19 +714,18 @@
                 saveBtn.textContent = '⚠️ 儲存失敗，請重試';
                 saveBtn.style.backgroundColor = '#e74c3c';
                 
-                setTimeout(() => {
+                setTimeout(function() {
                     saveBtn.textContent = '💾 保存到雲端';
                     saveBtn.style.backgroundColor = '#3498db';
                     saveBtn.disabled = false;
                 }, 3000);
+                isSaving = false;
             }
-            
-            isSaving = false;
         }
         
         // ---------- RENDER ROSTER ----------
         function renderRoster() {
-            const container = document.getElementById('studentList');
+            var container = document.getElementById('studentList');
             if (!container) return;
             
             if (!students || !students.length) {
@@ -734,33 +734,35 @@
             }
             
             container.innerHTML = '';
-            students.forEach((student, idx) => {
-                const li = document.createElement('li');
-                li.className = `student-item ${attendance[idx] ? 'present' : ''} ${student.temporary ? 'temporary' : ''}`;
+            students.forEach(function(student, idx) {
+                var li = document.createElement('li');
+                li.className = 'student-item';
+                if (attendance[idx]) li.className += ' present';
+                if (student.temporary) li.className += ' temporary';
                 
-                const infoDiv = document.createElement('div');
+                var infoDiv = document.createElement('div');
                 infoDiv.className = 'student-info';
-                const nameSpan = document.createElement('div');
+                var nameSpan = document.createElement('div');
                 nameSpan.className = 'student-name';
                 nameSpan.textContent = student.name;
                 if (student.temporary) {
-                    const badge = document.createElement('span');
+                    var badge = document.createElement('span');
                     badge.className = 'student-badge';
                     badge.textContent = '臨時';
                     nameSpan.appendChild(badge);
                 }
-                const emailSpan = document.createElement('div');
+                var emailSpan = document.createElement('div');
                 emailSpan.className = 'student-email';
                 emailSpan.textContent = student.email || '';
                 infoDiv.appendChild(nameSpan);
                 infoDiv.appendChild(emailSpan);
                 
-                const checkWrapper = document.createElement('div');
+                var checkWrapper = document.createElement('div');
                 checkWrapper.className = 'attendance-checkbox';
-                const cb = document.createElement('input');
+                var cb = document.createElement('input');
                 cb.type = 'checkbox';
                 cb.checked = !!attendance[idx];
-                cb.addEventListener('change', (e) => {
+                cb.addEventListener('change', function(e) {
                     e.stopPropagation();
                     toggleAttendanceByIdx(idx);
                 });
@@ -770,11 +772,11 @@
                 li.appendChild(checkWrapper);
                 
                 if (student.temporary) {
-                    const delBtn = document.createElement('span');
+                    var delBtn = document.createElement('span');
                     delBtn.className = 'delete-student';
                     delBtn.textContent = '✖';
                     delBtn.title = '刪除此同學';
-                    delBtn.addEventListener('click', (e) => {
+                    delBtn.addEventListener('click', function(e) {
                         e.stopPropagation();
                         deleteTemporaryStudent(idx);
                     });
@@ -794,7 +796,9 @@
         
         function markAllPresent() {
             if (confirm("📌 標記所有人今日出席？")) {
-                students.forEach((_, idx) => { attendance[idx] = true; });
+                students.forEach(function(_, idx) { 
+                    attendance[idx] = true; 
+                });
                 renderRoster();
                 updateSummaryStats();
                 autoSaveLocal();
@@ -803,7 +807,9 @@
         
         function resetAttendance() {
             if (confirm("⚠️ 重設今日所有出席記錄？")) {
-                students.forEach((_, idx) => { attendance[idx] = false; });
+                students.forEach(function(_, idx) { 
+                    attendance[idx] = false; 
+                });
                 renderRoster();
                 updateSummaryStats();
                 autoSaveLocal();
@@ -811,31 +817,39 @@
         }
         
         function updateSummaryStats() {
-            const presentCount = Object.values(attendance).filter(v => v === true).length;
-            const presentEl = document.getElementById('presentCount');
-            const totalEl = document.getElementById('totalStudents');
+            var presentCount = 0;
+            for (var key in attendance) {
+                if (attendance[key] === true) presentCount++;
+            }
+            var presentEl = document.getElementById('presentCount');
+            var totalEl = document.getElementById('totalStudents');
             if (presentEl) presentEl.innerText = presentCount;
             if (totalEl) totalEl.innerText = students.length;
         }
         
         // ---------- STUDENT MANAGEMENT ----------
         function addNewStudentFromModal() {
-            const name = document.getElementById('studentName').value.trim();
+            var name = document.getElementById('studentName').value.trim();
             if (!name) {
                 alert("請填寫學生姓名");
                 return;
             }
-            const email = document.getElementById('studentEmail').value.trim();
-            const phone = document.getElementById('studentPhone').value.trim();
-            const group = document.getElementById('studentGroup').value.trim();
-            const markNow = document.getElementById('markPresent').checked;
+            var email = document.getElementById('studentEmail').value.trim();
+            var phone = document.getElementById('studentPhone').value.trim();
+            var group = document.getElementById('studentGroup').value.trim();
+            var markNow = document.getElementById('markPresent').checked;
             
-            if (students.some(s => s.name === name)) {
-                alert(`⚠️ 學生 "${name}" 已存在！`);
+            // Check if student already exists
+            var exists = false;
+            students.forEach(function(s) {
+                if (s.name === name) exists = true;
+            });
+            if (exists) {
+                alert('⚠️ 學生 "' + name + '" 已存在！');
                 return;
             }
             
-            const newStudent = {
+            var newStudent = {
                 name: name,
                 email: email,
                 phone: phone,
@@ -843,26 +857,26 @@
                 temporary: true
             };
             students.push(newStudent);
-            const newIdx = students.length - 1;
+            var newIdx = students.length - 1;
             attendance[newIdx] = markNow;
             renderRoster();
             updateSummaryStats();
             autoSaveLocal();
             hideModal();
             clearModalInputs();
-            alert(`✨ 已加入 ${name} ✨\n\n請點擊「保存到雲端」將資料儲存至 Google Sheets`);
+            alert('✨ 已加入 ' + name + ' ✨\n\n請點擊「保存到雲端」將資料儲存至 Google Sheets');
         }
         
         function deleteTemporaryStudent(index) {
-            const student = students[index];
+            var student = students[index];
             if (!student.temporary) {
                 alert("基礎學生無法刪除，僅能刪除臨時加入的同學");
                 return;
             }
-            if (confirm(`確定刪除「${student.name}」嗎？`)) {
+            if (confirm('確定刪除「' + student.name + '」嗎？')) {
                 students.splice(index, 1);
-                const newAttendance = {};
-                students.forEach((_, i) => {
+                var newAttendance = {};
+                students.forEach(function(_, i) {
                     newAttendance[i] = attendance[i] || false;
                 });
                 attendance = newAttendance;
@@ -874,77 +888,193 @@
         
         // ---------- UTILITY FUNCTIONS ----------
         function generateTodayCSV() {
-            const dateLabel = new Date().toLocaleDateString('zh-HK');
-            let csv = '日期,姓名,電郵,電話,團契,出席狀態\n';
-            students.forEach((stu, idx) => {
-                const status = attendance[idx] ? '1' : '0';
-                csv += `"${dateLabel}","${stu.name}","${stu.email || ''}","${stu.phone || ''}","${stu.group || ''}",${status}\n`;
+            var dateLabel = new Date().toLocaleDateString('zh-HK');
+            var csv = '日期,姓名,電郵,電話,團契,出席狀態\n';
+            students.forEach(function(stu, idx) {
+                var status = attendance[idx] ? '1' : '0';
+                csv += '"' + dateLabel + '","' + stu.name + '","' + (stu.email || '') + '","' + (stu.phone || '') + '","' + (stu.group || '') + '",' + status + '\n';
             });
             return csv;
         }
         
-        async function copyAttendanceToClipboard() {
-            const csvText = generateTodayCSV();
+        function copyAttendanceToClipboard() {
+            var csvText = generateTodayCSV();
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                try {
-                    await navigator.clipboard.writeText(csvText);
-                    const copyBtn = document.getElementById('copyBtn');
-                    const orig = copyBtn.innerHTML;
+                navigator.clipboard.writeText(csvText).then(function() {
+                    var copyBtn = document.getElementById('copyBtn');
+                    var orig = copyBtn.innerHTML;
                     copyBtn.innerHTML = '✓ 已複製';
                     copyBtn.style.backgroundColor = '#27ae60';
-                    setTimeout(() => {
+                    setTimeout(function() {
                         copyBtn.innerHTML = orig;
                         copyBtn.style.backgroundColor = '#5856d6';
                     }, 2000);
-                } catch(e) {
+                }).catch(function() {
                     alert("無法複製，請手動選取");
-                }
+                });
             } else {
                 alert("請手動複製資料: \n" + csvText.substring(0, 500));
             }
         }
         
         function emailAttendance() {
-            const subject = `屬靈恩賜與服事 - 出席記錄 ${new Date().toLocaleDateString()}`;
-            const body = generateTodayCSV();
-            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            var subject = '屬靈恩賜與服事 - 出席記錄 ' + new Date().toLocaleDateString();
+            var body = generateTodayCSV();
+            window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
         }
         
         function exportAllToCSV() {
-            let masterCSV = '日期,姓名,電郵,電話,團契,出席狀態\n';
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
+            var masterCSV = '日期,姓名,電郵,電話,團契,出席狀態\n';
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
                 if (key && key.startsWith('attendance_')) {
-                    const datePart = key.replace('attendance_', '');
-                    let displayDate = datePart;
+                    var datePart = key.replace('attendance_', '');
+                    var displayDate = datePart;
                     try {
                         displayDate = new Date(datePart).toLocaleDateString('zh-HK');
                     } catch(e) {}
-                    const storedData = JSON.parse(localStorage.getItem(key) || '{}');
-                    students.forEach((student, idx) => {
+                    var storedData = JSON.parse(localStorage.getItem(key) || '{}');
+                    students.forEach(function(student, idx) {
                         if (storedData.hasOwnProperty(idx)) {
-                            const status = storedData[idx] ? '1' : '0';
-                            masterCSV += `"${displayDate}","${student.name}","${student.email || ''}","${student.phone || ''}","${student.group || ''}",${status}\n`;
+                            var status = storedData[idx] ? '1' : '0';
+                            masterCSV += '"' + displayDate + '","' + student.name + '","' + (student.email || '') + '","' + (student.phone || '') + '","' + (student.group || '') + '",' + status + '\n';
                         }
                     });
                 }
             }
-            const blob = new Blob(['\uFEFF' + masterCSV], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
+            var blob = new Blob(['\uFEFF' + masterCSV], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `屬靈恩賜出席全紀錄_${new Date().toISOString().slice(0,10)}.csv`;
+            link.download = '屬靈恩賜出席全紀錄_' + new Date().toISOString().slice(0,10) + '.csv';
             link.click();
         }
         
         // ---------- HISTORY FUNCTIONS ----------
-        async function loadHistoryTab() {
-            const historyDiv = document.getElementById('historyList');
-            const detailDiv = document.getElementById('historyDetail');
+        function loadHistoryTab() {
+            var historyDiv = document.getElementById('historyList');
+            var detailDiv = document.getElementById('historyDetail');
             if (detailDiv) detailDiv.style.display = 'none';
-            const keys = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const k = localStorage.key(i);
+            var keys = [];
+            for (var i = 0; i < localStorage.length; i++) {
+                var k = localStorage.key(i);
                 if (k && k.startsWith('attendance_')) keys.push(k);
             }
             if (keys.length === 0) {
                 historyDiv.innerHTML = '<p style="text-align:center; padding:20px;">📭 尚無歷史出席記錄</p>';
+                return;
+            }
+            keys.sort().reverse();
+            var html = '<h3 style="margin-top:0;">📆 歷史出席記錄</h3>';
+            keys.forEach(function(key) {
+                var dateRaw = key.replace('attendance_', '');
+                var dateShow = dateRaw;
+                try { dateShow = new Date(dateRaw).toLocaleDateString('zh-HK'); } catch(e) {}
+                var data = JSON.parse(localStorage.getItem(key) || '{}');
+                var total = Object.keys(data).length;
+                var present = 0;
+                for (var k in data) {
+                    if (data[k] === true) present++;
+                }
+                html += '<div class="history-item" data-datekey="' + dateRaw + '">' +
+                        '<div class="history-date">📅 ' + dateShow + '</div>' +
+                        '<div class="history-stats">✅ 出席: ' + present + '/' + total + ' &nbsp; ❌ 缺席: ' + (total - present) + '</div>' +
+                        '</div>';
+            });
+            historyDiv.innerHTML = html;
+            document.querySelectorAll('.history-item').forEach(function(el) {
+                el.addEventListener('click', function() {
+                    var dateKey = el.getAttribute('data-datekey');
+                    viewHistoryDetail(dateKey);
+                });
+            });
+        }
+        
+        function viewHistoryDetail(dateKey) {
+            var data = JSON.parse(localStorage.getItem('attendance_' + dateKey) || '{}');
+            var detailDiv = document.getElementById('historyDetail');
+            var detailHtml = '<button class="back-button" id="backHistoryBtn">← 返回列表</button>' +
+                              '<h3>📅 ' + new Date(dateKey).toLocaleDateString('zh-HK') + '</h3>' +
+                              '<button class="delete-btn" id="delHistoryBtn">🗑️ 刪除此日記錄</button>' +
+                              '<ul class="student-list" style="margin-top:16px;">';
+            students.forEach(function(stu, idx) {
+                var isPresent = data[idx] === true;
+                detailHtml += '<li class="student-item ' + (isPresent ? 'present' : '') + '" style="opacity:0.9">' +
+                                '<div class="student-info"><div class="student-name">' + stu.name + '</div><div class="student-email">' + (stu.email || '') + '</div></div>' +
+                                '<div style="font-weight:bold;">' + (isPresent ? '✅ 出席' : '❌ 缺席') + '</div>' +
+                               '</li>';
+            });
+            detailHtml += '</ul>';
+            detailDiv.innerHTML = detailHtml;
+            detailDiv.style.display = 'block';
+            document.getElementById('historyList').style.display = 'none';
+            document.getElementById('backHistoryBtn').addEventListener('click', function() {
+                document.getElementById('historyList').style.display = 'block';
+                detailDiv.style.display = 'none';
+            });
+            document.getElementById('delHistoryBtn').addEventListener('click', function() {
+                if(confirm('刪除該天出席記錄？')) {
+                    localStorage.removeItem('attendance_' + dateKey);
+                    loadHistoryTab();
+                }
+            });
+        }
+        
+        // ---------- MODAL FUNCTIONS ----------
+        function showModal() { 
+            document.getElementById('addStudentModal').classList.add('active'); 
+        }
+        
+        function hideModal() { 
+            document.getElementById('addStudentModal').classList.remove('active'); 
+        }
+        
+        function clearModalInputs() {
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentEmail').value = '';
+            document.getElementById('studentPhone').value = '';
+            document.getElementById('studentGroup').value = '';
+            document.getElementById('markPresent').checked = true;
+        }
+        
+        // ---------- EVENT LISTENERS ----------
+        function attachEventListeners() {
+            document.getElementById('markAllBtn').onclick = markAllPresent;
+            document.getElementById('resetAttendanceBtn').onclick = resetAttendance;
+            document.getElementById('saveAttendanceBtn').onclick = saveToGoogleSheets;
+            document.getElementById('copyBtn').onclick = copyAttendanceToClipboard;
+            document.getElementById('emailBtn').onclick = emailAttendance;
+            document.getElementById('openModalBtn').onclick = showModal;
+            document.getElementById('closeModalBtn').onclick = hideModal;
+            document.getElementById('confirmAddBtn').onclick = addNewStudentFromModal;
+            document.getElementById('exportCsvBtn').onclick = exportAllToCSV;
+            
+            document.getElementById('tabAttendanceBtn').onclick = function() { switchTab('attendance'); };
+            document.getElementById('tabHistoryBtn').onclick = function() { switchTab('history'); };
+            window.onclick = function(e) { 
+                if(e.target === document.getElementById('addStudentModal')) hideModal(); 
+            };
+        }
+        
+        function switchTab(tab) {
+            var attTab = document.getElementById('attendanceTab');
+            var histTab = document.getElementById('historyTab');
+            var btnAtt = document.getElementById('tabAttendanceBtn');
+            var btnHist = document.getElementById('tabHistoryBtn');
+            if(tab === 'attendance') {
+                attTab.classList.add('active');
+                histTab.classList.remove('active');
+                btnAtt.classList.add('active');
+                btnHist.classList.remove('active');
+                renderRoster();
+                updateSummaryStats();
+            } else {
+                attTab.classList.remove('active');
+                histTab.classList.add('active');
+                btnAtt.classList.remove('active');
+                btnHist.classList.add('active');
+                loadHistoryTab();
+            }
+        }
+    </script>
+</body>
+</html>
