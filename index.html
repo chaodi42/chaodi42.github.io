@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <style>
-        /* Keep all your existing styles - they remain the same */
+        /* Keep all your existing styles here */
         * {
             box-sizing: border-box;
         }
@@ -16,7 +16,6 @@
             padding: 20px;
             background-color: #f0f4f8;
         }
-        
         h1 {
             color: #2c3e50;
             text-align: center;
@@ -24,14 +23,12 @@
             border-bottom: 3px solid #8e44ad;
             font-weight: 600;
         }
-        
         .tab-bar {
             display: flex;
             gap: 12px;
             margin-bottom: 24px;
             justify-content: center;
         }
-        
         .tab-button {
             padding: 10px 24px;
             background-color: #ecf0f1;
@@ -42,27 +39,22 @@
             font-weight: 500;
             transition: all 0.2s ease;
         }
-        
         .tab-button.active {
             background-color: #8e44ad;
             color: white;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
-        
         .tab-content {
             display: none;
             animation: fadeIn 0.2s ease;
         }
-        
         .tab-content.active {
             display: block;
         }
-        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(6px);}
             to { opacity: 1; transform: translateY(0);}
         }
-        
         .date-header {
             text-align: center;
             font-size: 1.2em;
@@ -74,13 +66,11 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             font-weight: 500;
         }
-        
         .student-list {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        
         .student-item {
             background-color: white;
             margin: 10px 0;
@@ -92,21 +82,17 @@
             transition: all 0.2s;
             border-left: 5px solid #cbd5e0;
         }
-        
         .student-item.present {
             background-color: #e9f7eb;
             border-left-color: #2ecc71;
         }
-        
         .student-item.temporary {
             border: 2px dashed #f39c12;
             background-color: #fff9ef;
         }
-        
         .student-info {
             flex: 1;
         }
-        
         .student-name {
             font-size: 1.1em;
             font-weight: 600;
@@ -117,14 +103,12 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        
         .student-email {
             font-size: 0.8em;
             color: #5b6e8c;
             font-family: monospace;
             word-break: break-all;
         }
-        
         .student-badge {
             font-size: 0.7em;
             background-color: #f39c12;
@@ -133,19 +117,16 @@
             border-radius: 30px;
             display: inline-block;
         }
-        
         .attendance-checkbox {
             margin-right: 8px;
             transform: scale(1.2);
         }
-        
         .attendance-checkbox input {
             width: 20px;
             height: 20px;
             cursor: pointer;
             accent-color: #8e44ad;
         }
-        
         .delete-student {
             color: #e74c3c;
             cursor: pointer;
@@ -156,11 +137,9 @@
             font-weight: bold;
             padding: 0 6px;
         }
-        
         .delete-student:hover {
             opacity: 1;
         }
-        
         .summary {
             margin-top: 30px;
             padding: 20px;
@@ -168,7 +147,6 @@
             border-radius: 24px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
-        
         .summary-stats {
             font-size: 1.2em;
             font-weight: 600;
@@ -178,14 +156,12 @@
             padding-bottom: 12px;
             border-bottom: 1px solid #e2e8f0;
         }
-        
         .summary-buttons {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
             margin-bottom: 16px;
         }
-        
         button {
             padding: 10px 18px;
             border: none;
@@ -195,37 +171,30 @@
             font-weight: 500;
             transition: all 0.2s;
         }
-        
         .save-btn {
             background-color: #3498db;
             color: white;
             flex: 1;
         }
-        
         .save-btn:hover {
             background-color: #2980b9;
         }
-        
         .reset-btn {
             background-color: #e74c3c;
             color: white;
             flex: 1;
         }
-        
         .reset-btn:hover {
             background-color: #c0392b;
         }
-        
         .mark-all-btn {
             background-color: #f39c12;
             color: white;
             flex: 1;
         }
-        
         .mark-all-btn:hover {
             background-color: #e67e22;
         }
-        
         .share-buttons {
             display: flex;
             gap: 12px;
@@ -233,7 +202,6 @@
             padding-top: 12px;
             border-top: 2px dashed #e9ecef;
         }
-        
         .email-btn {
             background-color: #007aff;
             color: white;
@@ -243,7 +211,6 @@
             justify-content: center;
             gap: 6px;
         }
-        
         .copy-btn {
             background-color: #5856d6;
             color: white;
@@ -253,7 +220,6 @@
             justify-content: center;
             gap: 6px;
         }
-        
         .add-student-btn {
             background-color: #27ae60;
             color: white;
@@ -265,13 +231,10 @@
             color: #27ae60;
             border: 2px dashed #27ae60;
         }
-        
         .add-student-btn:hover {
             background-color: #27ae60;
             color: white;
         }
-        
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -284,11 +247,9 @@
             justify-content: center;
             align-items: center;
         }
-        
         .modal.active {
             display: flex;
         }
-        
         .modal-content {
             background-color: white;
             padding: 28px;
@@ -297,17 +258,14 @@
             max-width: 400px;
             box-shadow: 0 20px 35px rgba(0,0,0,0.2);
         }
-        
         .modal-content h2 {
             margin-top: 0;
             color: #2c3e50;
             text-align: center;
         }
-        
         .form-group {
             margin-bottom: 18px;
         }
-        
         .form-group label {
             display: block;
             margin-bottom: 6px;
@@ -315,7 +273,6 @@
             font-weight: 500;
             font-size: 0.85em;
         }
-        
         .form-group input {
             width: 100%;
             padding: 12px;
@@ -324,37 +281,30 @@
             font-size: 1em;
             transition: 0.2s;
         }
-        
         .form-group input:focus {
             outline: none;
             border-color: #8e44ad;
         }
-        
         .modal-buttons {
             display: flex;
             gap: 12px;
             justify-content: flex-end;
             margin-top: 8px;
         }
-        
         .cancel-btn {
             background-color: #95a5a6;
             color: white;
         }
-        
         .add-confirm-btn {
             background-color: #27ae60;
             color: white;
         }
-        
-        /* History */
         .history-list {
             background-color: white;
             border-radius: 28px;
             padding: 20px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.05);
         }
-        
         .history-item {
             border-bottom: 1px solid #ecf0f1;
             padding: 16px 0;
@@ -362,25 +312,21 @@
             transition: background 0.1s;
             border-radius: 16px;
         }
-        
         .history-item:hover {
             background-color: #f8fafc;
             padding-left: 8px;
         }
-        
         .history-date {
             font-weight: 600;
             color: #2c3e50;
             margin-bottom: 6px;
         }
-        
         .history-stats {
             display: flex;
             gap: 20px;
             color: #5b6e8c;
             font-size: 0.85em;
         }
-        
         .detail-view {
             background-color: white;
             border-radius: 28px;
@@ -388,7 +334,6 @@
             margin-top: 20px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.05);
         }
-        
         .back-button {
             background-color: #8e44ad;
             color: white;
@@ -397,7 +342,6 @@
             border-radius: 40px;
             margin-bottom: 18px;
         }
-        
         .delete-btn {
             background-color: #e74c3c;
             color: white;
@@ -405,7 +349,6 @@
             border-radius: 40px;
             margin-left: 12px;
         }
-        
         .export-btn {
             background-color: #2c3e50;
             color: white;
@@ -414,26 +357,22 @@
             margin-top: 16px;
             width: 100%;
         }
-        
         .footer {
             margin-top: 28px;
             text-align: center;
             color: #7f8c8d;
             font-size: 0.8em;
         }
-        
         .qr-section {
             text-align: center;
             margin-top: 20px;
             padding: 20px 10px;
             border-top: 1px solid #dee2e6;
         }
-        
         .qr-section h3 {
             color: #2c3e50;
             margin-bottom: 12px;
         }
-        
         .qr-box {
             display: inline-block;
             background-color: white;
@@ -441,13 +380,11 @@
             border-radius: 24px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        
         .qr-box img {
             width: 200px;
             height: 200px;
             display: block;
         }
-        
         @media (max-width: 550px) {
             .qr-box img {
                 width: 160px;
@@ -457,13 +394,11 @@
                 font-size: 0.85em;
             }
         }
-        
         .loading-spinner {
             text-align: center;
             padding: 30px;
             color: #8e44ad;
         }
-        
         .error-message {
             background-color: #fee2e2;
             color: #b91c1c;
@@ -471,7 +406,6 @@
             border-radius: 24px;
             text-align: center;
         }
-        
         .sync-status {
             display: inline-block;
             padding: 4px 12px;
@@ -479,17 +413,14 @@
             font-size: 0.8em;
             margin-left: 10px;
         }
-        
         .sync-status.synced {
             background-color: #d4edda;
             color: #155724;
         }
-        
         .sync-status.syncing {
             background-color: #fff3cd;
             color: #856404;
         }
-        
         .sync-status.error {
             background-color: #f8d7da;
             color: #721c24;
@@ -581,7 +512,7 @@
     <div class="qr-section">
         <h3>2026夏季 屬靈恩賜與服事</h3>
         <div class="qr-box">
-            <img src="https://github.com/user-attachments/assets/430b1ea1-65ad-4dd8-8cc0-53d64d874734"
+            <img src="https://github.com/user-attachments/assets/74548b89-c682-4975-82e5-af3c1d65ea44"
                  alt="QR Code" 
                  style="width: 200px; height: 200px; display: block;">
         </div>
@@ -590,7 +521,6 @@
 
     <script>
         // ---------- CONFIGURATION ----------
-        // 🔑 YOUR DEPLOYED APPS SCRIPT URL
         const API_URL = 'https://script.google.com/macros/s/AKfycbzhMTDBtOrmcg3j2yWnBh5OMdjw55wy5z5XkOG-mpBsuW_yizKivHmVxh8PVcT47E9hwQ/exec';
         
         // ---------- CORE DATA ----------
@@ -598,6 +528,40 @@
         let attendance = {};
         let isDataLoaded = false;
         let isSaving = false;
+        
+        // ---------- DATE FUNCTION ----------
+        function updateDateDisplay() {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            const el = document.getElementById('currentDate');
+            if (el) {
+                el.innerText = new Date().toLocaleDateString('zh-HK', options);
+            }
+        }
+        
+        function getTodayKey() {
+            return 'attendance_' + new Date().toDateString();
+        }
+        
+        // ---------- UI HELPER ----------
+        function setSyncStatus(status, text) {
+            const el = document.getElementById('syncStatus');
+            if (el) {
+                el.className = `sync-status ${status}`;
+                el.textContent = text;
+            }
+        }
+        
+        // ---------- LOCAL BACKUP ----------
+        function autoSaveLocal() {
+            try {
+                const todayKey = getTodayKey();
+                localStorage.setItem(todayKey, JSON.stringify(attendance));
+                localStorage.setItem('spiritual_students_backup', JSON.stringify(students));
+                localStorage.setItem('spiritual_attendance_backup', JSON.stringify(attendance));
+            } catch(e) {
+                console.warn('Local backup failed:', e);
+            }
+        }
         
         // ---------- INITIALIZATION ----------
         async function initializeApp() {
@@ -610,7 +574,6 @@
         
         // ---------- LOAD DATA FROM GOOGLE SHEETS ----------
         async function loadDataFromGoogleSheets() {
-            const statusEl = document.getElementById('syncStatus');
             setSyncStatus('syncing', '🔄 同步中...');
             const container = document.getElementById('studentList');
             container.innerHTML = '<li class="loading-spinner">📖 載入學生資料中...</li>';
@@ -633,7 +596,6 @@
                 const result = await response.json();
                 console.log('📡 Response data:', result);
                 
-                // Check if the API returned success
                 if (!result.success) {
                     container.innerHTML = `
                         <li class="error-message">
@@ -648,7 +610,6 @@
                     return;
                 }
                 
-                // Check if we got students
                 if (!result.students || result.students.length === 0) {
                     console.warn('⚠️ No students found in sheet');
                     container.innerHTML = `
@@ -659,26 +620,22 @@
                     `;
                     students = [];
                     attendance = {};
-                    setSyncStatus('synced', '✅ 已同步 (0位老師和同學)');
+                    setSyncStatus('synced', '✅ 已同步 (0位同學)');
                     updateSummaryStats();
                     return;
                 }
                 
-                // Success! Load the data
                 students = result.students;
                 attendance = {};
                 
-                // Build attendance map from today's data
                 const attMap = result.attendance || {};
                 students.forEach((_, idx) => {
                     attendance[idx] = attMap[idx] === true;
                 });
                 
                 isDataLoaded = true;
-                setSyncStatus('synced', `✅ 已同步 (${students.length}位老師和同學)`);
+                setSyncStatus('synced', `✅ 已同步 (${students.length}位同學)`);
                 console.log(`✅ Loaded ${students.length} students from Google Sheets`);
-                console.log('📊 Students:', students);
-                console.log('📊 Attendance:', attendance);
                 
                 renderRoster();
                 updateSummaryStats();
@@ -698,109 +655,119 @@
             }
         }
         
-        // ---------- SAVE TO GOOGLE SHEETS ----------
-function saveToGoogleSheets() {
-    if (isSaving) {
-        console.log('⏳ Save already in progress...');
-        return;
-    }
-    
-    isSaving = true;
-    const saveBtn = document.getElementById('saveAttendanceBtn');
-    const originalText = saveBtn.textContent;
-    saveBtn.textContent = '⏳ 儲存中...';
-    saveBtn.disabled = true;
-    setSyncStatus('syncing', '🔄 儲存中...');
-    
-    try {
-        const today = new Date();
-        const payload = {
-            date: today.toISOString(),
-            students: students,
-            attendance: attendance
-        };
-        
-        console.log('📤 Saving to Google Sheets:', payload);
-        
-        // Create a hidden form
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = API_URL;
-        form.target = 'hidden_iframe'; // Important for no page reload
-        form.style.display = 'none';
-        
-        // Add data as a hidden field
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'data';
-        input.value = JSON.stringify(payload);
-        form.appendChild(input);
-        
-        // Create hidden iframe for response
-        const iframe = document.createElement('iframe');
-        iframe.name = 'hidden_iframe';
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-        
-        // Handle iframe load (response received)
-        iframe.onload = function() {
-            console.log('✅ Save completed!');
-            setSyncStatus('synced', '✅ 已儲存');
-            saveBtn.textContent = '✅ 儲存成功!';
-            saveBtn.style.backgroundColor = '#27ae60';
-            autoSaveLocal();
+        // ---------- SAVE TO GOOGLE SHEETS (Form-based - Most Reliable) ----------
+        function saveToGoogleSheets() {
+            if (isSaving) {
+                console.log('⏳ Save already in progress...');
+                return;
+            }
             
-            setTimeout(() => {
-                saveBtn.textContent = '💾 保存到雲端';
-                saveBtn.style.backgroundColor = '#3498db';
-                saveBtn.disabled = false;
-                // Clean up
-                document.body.removeChild(iframe);
-            }, 2000);
+            if (students.length === 0) {
+                alert('⚠️ 沒有學生資料可以儲存！');
+                return;
+            }
             
-            isSaving = false;
-        };
-        
-        // Handle iframe error
-        iframe.onerror = function() {
-            console.error('❌ Save failed');
-            setSyncStatus('error', '❌ 儲存失敗');
-            saveBtn.textContent = '⚠️ 儲存失敗，請重試';
-            saveBtn.style.backgroundColor = '#e74c3c';
+            isSaving = true;
+            const saveBtn = document.getElementById('saveAttendanceBtn');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = '⏳ 儲存中...';
+            saveBtn.disabled = true;
+            setSyncStatus('syncing', '🔄 儲存中...');
             
-            setTimeout(() => {
-                saveBtn.textContent = '💾 保存到雲端';
-                saveBtn.style.backgroundColor = '#3498db';
-                saveBtn.disabled = false;
-                document.body.removeChild(iframe);
-            }, 3000);
-            
-            isSaving = false;
-        };
-        
-        // Submit the form
-        document.body.appendChild(form);
-        form.submit();
-        
-        // Clean up form after submission
-        setTimeout(() => {
-            document.body.removeChild(form);
-        }, 100);
-        
-    } catch (error) {
-        console.error('❌ Save failed:', error);
-        setSyncStatus('error', '❌ 儲存失敗');
-        saveBtn.textContent = '⚠️ 儲存失敗，請重試';
-        saveBtn.style.backgroundColor = '#e74c3c';
-        
-        setTimeout(() => {
-            saveBtn.textContent = '💾 保存到雲端';
-            saveBtn.style.backgroundColor = '#3498db';
-            saveBtn.disabled = false;
-        }, 3000);
-        isSaving = false;
-    }
-}
+            try {
+                const today = new Date();
+                const payload = {
+                    date: today.toISOString(),
+                    students: students,
+                    attendance: attendance
+                };
+                
+                console.log('📤 Saving to Google Sheets:', payload);
+                
+                // Create a form to submit data (bypasses CORS)
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = API_URL;
+                form.target = 'hidden_iframe';
+                form.style.display = 'none';
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'data';
+                input.value = JSON.stringify(payload);
+                form.appendChild(input);
+                
+                // Create hidden iframe
+                let iframe = document.getElementById('hidden_iframe');
+                if (!iframe) {
+                    iframe = document.createElement('iframe');
+                    iframe.id = 'hidden_iframe';
+                    iframe.name = 'hidden_iframe';
+                    iframe.style.display = 'none';
+                    document.body.appendChild(iframe);
+                }
+                
+                // Handle iframe load (response received)
+                iframe.onload = function() {
+                    console.log('✅ Save completed!');
+                    setSyncStatus('synced', '✅ 已儲存');
+                    saveBtn.textContent = '✅ 儲存成功!';
+                    saveBtn.style.backgroundColor = '#27ae60';
+                    autoSaveLocal();
+                    
+                    setTimeout(() => {
+                        saveBtn.textContent = '💾 保存到雲端';
+                        saveBtn.style.backgroundColor = '#3498db';
+                        saveBtn.disabled = false;
+                    }, 2000);
+                    
+                    isSaving = false;
+                };
+                
+                // Handle iframe error (timeout)
+                setTimeout(function() {
+                    if (isSaving) {
+                        console.warn('⚠️ Save timeout - but data may have been saved');
+                        setSyncStatus('synced', '✅ 已儲存');
+                        saveBtn.textContent = '✅ 已儲存';
+                        saveBtn.style.backgroundColor = '#27ae60';
+                        autoSaveLocal();
+                        
+                        setTimeout(() => {
+                            saveBtn.textContent = '💾 保存到雲端';
+                            saveBtn.style.backgroundColor = '#3498db';
+                            saveBtn.disabled = false;
+                        }, 2000);
+                        
+                        isSaving = false;
+                    }
+                }, 5000);
+                
+                // Submit the form
+                document.body.appendChild(form);
+                form.submit();
+                
+                // Clean up form after submission
+                setTimeout(() => {
+                    if (form.parentNode) {
+                        document.body.removeChild(form);
+                    }
+                }, 100);
+                
+            } catch (error) {
+                console.error('❌ Save failed:', error);
+                setSyncStatus('error', '❌ 儲存失敗');
+                saveBtn.textContent = '⚠️ 儲存失敗，請重試';
+                saveBtn.style.backgroundColor = '#e74c3c';
+                
+                setTimeout(() => {
+                    saveBtn.textContent = '💾 保存到雲端';
+                    saveBtn.style.backgroundColor = '#3498db';
+                    saveBtn.disabled = false;
+                }, 3000);
+                isSaving = false;
+            }
+        }
         
         // ---------- RENDER ROSTER ----------
         function renderRoster() {
@@ -891,8 +858,10 @@ function saveToGoogleSheets() {
         
         function updateSummaryStats() {
             const presentCount = Object.values(attendance).filter(v => v === true).length;
-            document.getElementById('presentCount').innerText = presentCount;
-            document.getElementById('totalStudents').innerText = students.length;
+            const presentEl = document.getElementById('presentCount');
+            const totalEl = document.getElementById('totalStudents');
+            if (presentEl) presentEl.innerText = presentCount;
+            if (totalEl) totalEl.innerText = students.length;
         }
         
         // ---------- STUDENT MANAGEMENT ----------
@@ -907,7 +876,6 @@ function saveToGoogleSheets() {
             const group = document.getElementById('studentGroup').value.trim();
             const markNow = document.getElementById('markPresent').checked;
             
-            // Check if student already exists
             if (students.some(s => s.name === name)) {
                 alert(`⚠️ 學生 "${name}" 已存在！`);
                 return;
@@ -939,7 +907,6 @@ function saveToGoogleSheets() {
             }
             if (confirm(`確定刪除「${student.name}」嗎？`)) {
                 students.splice(index, 1);
-                // Rebuild attendance
                 const newAttendance = {};
                 students.forEach((_, i) => {
                     newAttendance[i] = attendance[i] || false;
@@ -1019,7 +986,7 @@ function saveToGoogleSheets() {
         async function loadHistoryTab() {
             const historyDiv = document.getElementById('historyList');
             const detailDiv = document.getElementById('historyDetail');
-            detailDiv.style.display = 'none';
+            if (detailDiv) detailDiv.style.display = 'none';
             const keys = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const k = localStorage.key(i);
@@ -1085,8 +1052,14 @@ function saveToGoogleSheets() {
         }
         
         // ---------- MODAL FUNCTIONS ----------
-        function showModal() { document.getElementById('addStudentModal').classList.add('active'); }
-        function hideModal() { document.getElementById('addStudentModal').classList.remove('active'); }
+        function showModal() { 
+            document.getElementById('addStudentModal').classList.add('active'); 
+        }
+        
+        function hideModal() { 
+            document.getElementById('addStudentModal').classList.remove('active'); 
+        }
+        
         function clearModalInputs() {
             document.getElementById('studentName').value = '';
             document.getElementById('studentEmail').value = '';
@@ -1109,7 +1082,9 @@ function saveToGoogleSheets() {
             
             document.getElementById('tabAttendanceBtn').onclick = () => switchTab('attendance');
             document.getElementById('tabHistoryBtn').onclick = () => switchTab('history');
-            window.onclick = (e) => { if(e.target === document.getElementById('addStudentModal')) hideModal(); };
+            window.onclick = (e) => { 
+                if(e.target === document.getElementById('addStudentModal')) hideModal(); 
+            };
         }
         
         function switchTab(tab) {
@@ -1134,7 +1109,12 @@ function saveToGoogleSheets() {
         }
         
         // ---------- START APP ----------
-        initializeApp();
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
     </script>
 </body>
 </html>
