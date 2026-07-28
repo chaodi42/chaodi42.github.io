@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>屬靈恩賜調查問卷 - 第1頁</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "微軟雅黑", sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #e3f2fd 50%, #e8f5e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e3f2fd;
+        }
+
+        .quiz-header h1 {
+            color: #1565c0;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .page-info {
+            color: #1976d2;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #66bb6a, #42a5f5);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .scale-reminder {
+            background: #f1f8e9;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #424242;
+            font-size: 14px;
+        }
+
+        .questions-list {
+            list-style: none;
+        }
+
+        .question-item {
+            background: #fafafa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .question-item:hover {
+            border-color: #90caf9;
+            background: #f5f5f5;
+        }
+
+        .question-item.answered {
+            border-color: #66bb6a;
+            background: #f1f8e9;
+        }
+
+        .question-number {
+            color: #1976d2;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            color: #424242;
+            font-size: 15px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .option-label {
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
+            padding: 10px 5px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            font-size: 14px;
+            user-select: none;
+        }
+
+        .option-label:hover {
+            border-color: #42a5f5;
+            background: #e3f2fd;
+        }
+
+        .option-label input[type="radio"] {
+            display: none;
+        }
+
+        .option-label.selected {
+            background: #1976d2;
+            color: white;
+            border-color: #1565c0;
+            font-weight: bold;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e3f2fd;
+        }
+
+        .page-indicators {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .page-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #757575;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .page-dot.active {
+            background: #1976d2;
+            color: white;
+        }
+
+        .page-dot.completed {
+            background: #66bb6a;
+            color: white;
+        }
+
+        .nav-button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .prev-button {
+            background: #e0e0e0;
+            color: #424242;
+        }
+
+        .prev-button:hover {
+            background: #bdbdbd;
+        }
+
+        .next-button {
+            background: linear-gradient(135deg, #42a5f5, #1e88e5);
+            color: white;
+        }
+
+        .next-button:hover {
+            background: linear-gradient(135deg, #1e88e5, #1565c0);
+            transform: translateX(2px);
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: white;
+        }
+
+        .submit-button:hover {
+            background: linear-gradient(135deg, #43a047, #2e7d32);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 20px;
+            }
+            
+            .options {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1>屬靈恩賜調查問卷</h1>
+            <div class="page-info">第 <span id="currentPage">1</span> 頁，共 10 頁</div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar" style="width: 10%"></div>
+        </div>
+
+        <div class="scale-reminder">
+            📋 <strong>4</strong>-經常 | <strong>3</strong>-時常 | <strong>2</strong>-有時 | <strong>1</strong>-偶爾 | <strong>0</strong>-從不
+        </div>
+
+        <div id="questionsContainer">
+            <!-- Questions will be loaded here -->
+            <p style="text-align: center; color: #757575;">載入中...</p>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-button prev-button" id="prevButton" onclick="navigatePage(-1)">
+                ← 上一頁
+            </button>
+            
+            <div class="page-indicators" id="pageIndicators">
+                <!-- Page dots will be generated here -->
+            </div>
+            
+            <button class="nav-button next-button" id="nextButton" onclick="navigatePage(1)">
+                下一頁 →
+            </button>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/questions.js"></script>
+    <script src="../js/quiz.js"></script>
+</body>
+</html>
