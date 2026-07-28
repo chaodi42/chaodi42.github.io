@@ -1,1 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>屬靈恩賜調查問卷 - 波士頓郊區華人聖經教會</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "微軟雅黑", "PingFang TC", "蘋果儷中黑", sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #e3f2fd 50%, #e8f5e9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 800px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            padding: 50px 40px;
+            margin: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e3f2fd;
+        }
+
+        .church-name {
+            color: #1976d2;
+            font-size: 14px;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .course-info {
+            color: #388e3c;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        h1 {
+            color: #1565c0;
+            font-size: 32px;
+            margin: 20px 0 10px;
+            letter-spacing: 3px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: #1976d2;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-left: 12px;
+            border-left: 4px solid #4caf50;
+        }
+
+        .section-content {
+            color: #424242;
+            font-size: 15px;
+            text-align: justify;
+            padding-left: 16px;
+        }
+
+        .scripture {
+            color: #1976d2;
+            font-style: italic;
+            margin: 8px 0;
+        }
+
+        .scale-box {
+            background: #f1f8e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .scale-title {
+            color: #2e7d32;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .scale-items {
+            color: #424242;
+            font-size: 14px;
+        }
+
+        .start-button {
+            display: block;
+            width: 250px;
+            margin: 40px auto 0;
+            padding: 16px 30px;
+            background: linear-gradient(135deg, #42a5f5, #1e88e5);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+        }
+
+        .start-button:hover {
+            background: linear-gradient(135deg, #1e88e5, #1565c0);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+        }
+
+        .highlight {
+            color: #1976d2;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .start-button {
+                width: 200px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="church-name">波士頓郊區華人聖經教會</div>
+            <div class="course-info">課程：CC105 - 屬靈恩賜與服事</div>
+            <h1>屬靈恩賜調查問卷</h1>
+        </div>
+
+        <div class="section">
+            <div class="section-title">前言</div>
+            <div class="section-content">
+                每一位基督徒，都得到一些特殊的恩賜，用來建造基督的身體。這樣的應許，就在聖經上，譬如<span class="scripture">羅馬書12：6a："按我們所得的恩賜，各有不同"</span>，以及<span class="scripture">哥林多前書12:7："聖靈顯在各人身上，是叫人得益處。"</span>沒有人曾經獨得所有的恩賜，但是神給我們每個人至少一種，而且常常是多種恩賜，被呼招的基督徒以恩賜來服事，滿足他們的教會及群體的需要。他們從而成為主耶穌在世上的手，腳，眼，耳，以跟隨基督的榜樣來服事別人。
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">目的</div>
+            <div class="section-content">
+                這本問卷<span class="highlight">不是測驗你信心和屬靈的程度</span>，而是幫助你認識和發掘你的恩賜，讓你在發掘屬靈恩賜的過程中，加添你的信心，並顯示你如何能在世上為基督的使命作最好的服事。
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">做法</div>
+            <div class="section-content">
+                <p>郝甘能屬靈恩賜調查（HSGI）這本問卷的精確度，與你是否誠實作答有直接的關係。請<span class="highlight">不要猜測</span>，因為這些問題沒有標準答案。如果你的回答，是根據你所認為正確的做法，或是自己期待的行為，或是別人對你的期望，那麼HSGI的結果就不准確。</p>
+                <p style="margin-top: 15px;">請你誠實的評估真實的自己，以你在生活中真實的經驗作答。唯有如此，才能真正了解你的恩賜。</p>
+                <p style="margin-top: 15px;">請你盡量回答每一個問題，<span class="highlight">不要略去任何一題</span>。當你作答的時候，先想"這是我生活的實況..."，然後在選項中，就"經常，時常，有時，偶爾，從不"等，選出最合適的反應並作記錄，每一題只能選一項。</p>
+            </div>
+        </div>
+
+        <div class="scale-box">
+            <div class="scale-title">答案選擇</div>
+            <div class="scale-items">
+                <strong>4</strong> - 經常 &nbsp;&nbsp;|&nbsp;&nbsp; 
+                <strong>3</strong> - 時常 &nbsp;&nbsp;|&nbsp;&nbsp; 
+                <strong>2</strong> - 有時 &nbsp;&nbsp;|&nbsp;&nbsp; 
+                <strong>1</strong> - 偶爾 &nbsp;&nbsp;|&nbsp;&nbsp; 
+                <strong>0</strong> - 從不
+            </div>
+        </div>
+
+        <a href="pages/quiz.html?page=1" class="start-button">開始問卷</a>
+    </div>
+</body>
+</html>
 
