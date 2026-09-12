@@ -613,7 +613,7 @@
                     container.innerHTML = '<li style="text-align:center; padding: 30px; color: #666;">📭 尚未有學生資料<br><small>請在 Google Sheets 的 "StudentsInfo" 分頁中加入學生資料</small></li>';
                     students = [];
                     attendance = {};
-                    setSyncStatus('synced', '✅ 已同步 (0位同學)');
+                    setSyncStatus('synced', '✅ 已同步 (0位同學和老師)');
                     updateSummaryStats();
                     return;
                 }
@@ -918,7 +918,7 @@
         }
         
         function emailAttendance() {
-            var subject = '屬靈恩賜與服事 - 出席記錄 ' + new Date().toLocaleDateString();
+            var subject = '出席記錄 ' + new Date().toLocaleDateString();
             var body = generateTodayCSV();
             window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
         }
@@ -945,7 +945,7 @@
             var blob = new Blob(['\uFEFF' + masterCSV], { type: 'text/csv;charset=utf-8;' });
             var link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = '屬靈恩賜出席全紀錄_' + new Date().toISOString().slice(0,10) + '.csv';
+            link.download = '出席全紀錄_' + new Date().toISOString().slice(0,10) + '.csv';
             link.click();
         }
         
