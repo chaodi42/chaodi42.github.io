@@ -624,8 +624,9 @@
                     var idB = parseInt(b.id, 10);
                     if (isNaN(idA)) idA = Number.MAX_SAFE_INTEGER;
                     if (isNaN(idB)) idB = Number.MAX_SAFE_INTEGER;
-                    return idA - idB;
-                });
+                    if (idA !== idB) return idA - idB;
+                    return String(a.name || '').localeCompare(String(b.name || ''));
+                });           
                 
                 attendance = {};
                 
@@ -750,11 +751,19 @@
                 
                 var infoDiv = document.createElement('div');
                 infoDiv.className = 'student-info';
+                
+                // ---- BUG 1 FIX: build the name line as ONE string ----
                 var nameSpan = document.createElement('div');
                 nameSpan.className = 'student-name';
-                nameSpan.textContent = (student.id !== undefined && student.id !== null && student.id !== '')
-                ? student.id + '. ' + student.name
-                : student.name;
+                
+                var idStr = (student.id !== undefined && student.id !== null && student.id !== '')
+                    ? String(student.id).trim()
+                    : '';
+                var nameStr = (student.name || '').toString().trim();
+                
+                // "1. Amy" on a single line
+                nameSpan.textContent = idStr ? (idStr + '. ' + nameStr) : nameStr;
+                // ------------------------------------------------------
                 
                 if (student.temporary) {
                     var badge = document.createElement('span');
@@ -762,9 +771,11 @@
                     badge.textContent = '臨時';
                     nameSpan.appendChild(badge);
                 }
+                
                 var emailSpan = document.createElement('div');
                 emailSpan.className = 'student-email';
                 emailSpan.textContent = student.email || '';
+                
                 infoDiv.appendChild(nameSpan);
                 infoDiv.appendChild(emailSpan);
                 
@@ -850,6 +861,7 @@
             var group = document.getElementById('studentGroup').value.trim();
             var markNow = document.getElementById('markPresent').checked;
             
+            // Check if student already exists
             var exists = false;
             students.forEach(function(s) {
                 if (s.name === name) exists = true;
@@ -859,14 +871,14 @@
                 return;
             }
             
-            // --- Auto-assign next available ID ---
+            // ---- Auto-assign next available ID ----
             var maxId = 0;
             students.forEach(function(s) {
                 var n = parseInt(s.id, 10);
                 if (!isNaN(n) && n > maxId) maxId = n;
             });
             var newId = maxId + 1;
-            // ------------------------------------
+            // ---------------------------------------
             
             var newStudent = {
                 id: newId,
@@ -877,30 +889,38 @@
                 temporary: true
             };
             
-            // --- Insert at correct position to keep ID order ---
-            var insertAt = students.length;
-            for (var i = 0; i < students.length; i++) {
-                var sid = parseInt(students[i].id, 10);
-                if (isNaN(sid) || sid > newId) {
-                    insertAt = i;
-                    break;
-                }
-            }
-            students.splice(insertAt, 0, newStudent);
+            // ---- Snapshot attendance BY NAME before sorting ----
+            var attendanceByName = {};
+            students.forEach(function(s, i) {
+                attendanceByName[s.name] = !!attendance[i];
+            });
+            // ----------------------------------------------------
             
-            // Shift attendance keys at/after insertAt up by 1, then set new entry
+            students.push(newStudent);
+            
+            // ---- SORT HERE (right after push) ----
+            students.sort(function(a, b) {
+                var idA = parseInt(a.id, 10);
+                var idB = parseInt(b.id, 10);
+                if (isNaN(idA)) idA = Number.MAX_SAFE_INTEGER;
+                if (isNaN(idB)) idB = Number.MAX_SAFE_INTEGER;
+                return idA - idB;
+            });
+            // --------------------------------------
+            
+            // ---- Rebuild attendance map against the new indices ----
             var newAttendance = {};
-            Object.keys(attendance).forEach(function(k) {
-                var i = parseInt(k, 10);
-                if (i < insertAt) {
-                    newAttendance[i] = attendance[k];
+            students.forEach(function(s, i) {
+                if (s === newStudent) {
+                    newAttendance[i] = markNow;
                 } else {
-                    newAttendance[i + 1] = attendance[k];
+                    newAttendance[i] = attendanceByName.hasOwnProperty(s.name)
+                        ? attendanceByName[s.name]
+                        : false;
                 }
             });
-            newAttendance[insertAt] = markNow;
             attendance = newAttendance;
-            // --------------------------------------------------
+            // --------------------------------------------------------
             
             renderRoster();
             updateSummaryStats();
