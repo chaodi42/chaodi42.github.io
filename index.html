@@ -619,6 +619,14 @@
                 }
                 
                 students = result.students;
+                students.sort(function(a, b) {
+                    var idA = parseInt(a.id, 10);
+                    var idB = parseInt(b.id, 10);
+                    if (isNaN(idA)) idA = Number.MAX_SAFE_INTEGER;
+                    if (isNaN(idB)) idB = Number.MAX_SAFE_INTEGER;
+                    return idA - idB;
+                });
+                
                 attendance = {};
                 
                 const attMap = result.attendance || {};
@@ -744,7 +752,10 @@
                 infoDiv.className = 'student-info';
                 var nameSpan = document.createElement('div');
                 nameSpan.className = 'student-name';
-                nameSpan.textContent = student.name;
+                nameSpan.textContent = (student.id !== undefined && student.id !== null && student.id !== '')
+                ? student.id + '. ' + student.name
+                : student.name;
+                
                 if (student.temporary) {
                     var badge = document.createElement('span');
                     badge.className = 'student-badge';
@@ -839,7 +850,6 @@
             var group = document.getElementById('studentGroup').value.trim();
             var markNow = document.getElementById('markPresent').checked;
             
-            // Check if student already exists
             var exists = false;
             students.forEach(function(s) {
                 if (s.name === name) exists = true;
@@ -849,22 +859,55 @@
                 return;
             }
             
+            // --- Auto-assign next available ID ---
+            var maxId = 0;
+            students.forEach(function(s) {
+                var n = parseInt(s.id, 10);
+                if (!isNaN(n) && n > maxId) maxId = n;
+            });
+            var newId = maxId + 1;
+            // ------------------------------------
+            
             var newStudent = {
+                id: newId,
                 name: name,
                 email: email,
                 phone: phone,
                 group: group,
                 temporary: true
             };
-            students.push(newStudent);
-            var newIdx = students.length - 1;
-            attendance[newIdx] = markNow;
+            
+            // --- Insert at correct position to keep ID order ---
+            var insertAt = students.length;
+            for (var i = 0; i < students.length; i++) {
+                var sid = parseInt(students[i].id, 10);
+                if (isNaN(sid) || sid > newId) {
+                    insertAt = i;
+                    break;
+                }
+            }
+            students.splice(insertAt, 0, newStudent);
+            
+            // Shift attendance keys at/after insertAt up by 1, then set new entry
+            var newAttendance = {};
+            Object.keys(attendance).forEach(function(k) {
+                var i = parseInt(k, 10);
+                if (i < insertAt) {
+                    newAttendance[i] = attendance[k];
+                } else {
+                    newAttendance[i + 1] = attendance[k];
+                }
+            });
+            newAttendance[insertAt] = markNow;
+            attendance = newAttendance;
+            // --------------------------------------------------
+            
             renderRoster();
             updateSummaryStats();
             autoSaveLocal();
             hideModal();
             clearModalInputs();
-            alert('✨ 已加入 ' + name + ' ✨\n\n請點擊「保存到雲端」將資料儲存至 Google Sheets');
+            alert('✨ 已加入 ' + name + ' (ID: ' + newId + ') ✨\n\n請點擊「保存到雲端」將資料儲存至 Google Sheets');
         }
         
         function deleteTemporaryStudent(index) {
@@ -875,11 +918,19 @@
             }
             if (confirm('確定刪除「' + student.name + '」嗎？')) {
                 students.splice(index, 1);
+                
                 var newAttendance = {};
-                students.forEach(function(_, i) {
-                    newAttendance[i] = attendance[i] || false;
+                Object.keys(attendance).forEach(function(k) {
+                    var i = parseInt(k, 10);
+                    if (i < index) {
+                        newAttendance[i] = attendance[k];
+                    } else if (i > index) {
+                        newAttendance[i - 1] = attendance[k];
+                    }
+                    // i === index is dropped
                 });
                 attendance = newAttendance;
+                
                 renderRoster();
                 updateSummaryStats();
                 autoSaveLocal();
@@ -889,10 +940,12 @@
         // ---------- UTILITY FUNCTIONS ----------
         function generateTodayCSV() {
             var dateLabel = new Date().toLocaleDateString('zh-HK');
-            var csv = '日期,姓名,電郵,電話,團契,出席狀態\n';
+            var csv = '日期,ID,姓名,電郵,電話,團契,出席狀態\n';
             students.forEach(function(stu, idx) {
                 var status = attendance[idx] ? '1' : '0';
-                csv += '"' + dateLabel + '","' + stu.name + '","' + (stu.email || '') + '","' + (stu.phone || '') + '","' + (stu.group || '') + '",' + status + '\n';
+                csv += '"' + dateLabel + '","' + (stu.id || '') + '","' + stu.name + '","' +
+                       (stu.email || '') + '","' + (stu.phone || '') + '","' +
+                       (stu.group || '') + '",' + status + '\n';
             });
             return csv;
         }
@@ -923,8 +976,9 @@
             window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
         }
         
+        
         function exportAllToCSV() {
-            var masterCSV = '日期,姓名,電郵,電話,團契,出席狀態\n';
+            var masterCSV = '日期,ID,姓名,電郵,電話,團契,出席狀態\n';
             for (var i = 0; i < localStorage.length; i++) {
                 var key = localStorage.key(i);
                 if (key && key.startsWith('attendance_')) {
@@ -937,7 +991,10 @@
                     students.forEach(function(student, idx) {
                         if (storedData.hasOwnProperty(idx)) {
                             var status = storedData[idx] ? '1' : '0';
-                            masterCSV += '"' + displayDate + '","' + student.name + '","' + (student.email || '') + '","' + (student.phone || '') + '","' + (student.group || '') + '",' + status + '\n';
+                            masterCSV += '"' + displayDate + '","' + (student.id || '') + '","' +
+                                         student.name + '","' + (student.email || '') + '","' +
+                                         (student.phone || '') + '","' + (student.group || '') + '",' +
+                                         status + '\n';
                         }
                     });
                 }
