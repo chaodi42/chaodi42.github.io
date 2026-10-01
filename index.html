@@ -631,9 +631,10 @@
                 attendance = {};
                 
                 const attMap = result.attendance || {};
-                students.forEach(function(_, idx) {
-                    attendance[idx] = attMap[idx] === true;
-                });
+                students.forEach(function(s, idx) {
+                    var key = (s.id !== undefined && s.id !== null && s.id !== '') ? s.id : s.name;
+                    attendance[idx] = attMap[key] === true;
+                });        
                 
                 setSyncStatus('synced', '✅ 已同步 (' + students.length + '位同學和老師)');
                 console.log('✅ Loaded ' + students.length + ' students from Google Sheets');
